@@ -109,10 +109,13 @@ class SignalService:
         self._threshold_cache = {}
         self._blacklist_cache = {}
         self.model_refresh_interval = max(
-            3600, int(os.environ.get('DEEP_MODEL_REFRESH_INTERVAL_SECONDS', '604800') or '604800'),
+            60, int(os.environ.get('DEEP_MODEL_REFRESH_INTERVAL_SECONDS', '21600') or '21600'),
+        )
+        self.max_scheduled_model_markets = max(
+            1, int(os.environ.get('DEEP_MODEL_REFRESH_MAX_MARKETS', '20') or '20'),
         )
         self.model_bootstrap_interval = max(
-            300, int(os.environ.get('DEEP_MODEL_BOOTSTRAP_INTERVAL_SECONDS', '900') or '900'),
+            30, int(os.environ.get('DEEP_MODEL_BOOTSTRAP_INTERVAL_SECONDS', '900') or '900'),
         )
         self.model_bootstrap_cooldown = max(
             self.model_bootstrap_interval,
@@ -311,20 +314,91 @@ class SignalService:
                 task.cancel()
         await asyncio.gather(*(task for task in tasks if task), return_exceptions=True)
 
+    async def _train_market_models(self, source, symbol, timeframe):
+        legacy_result = {'status': 'NOT_READY', 'reason': 'ADVISORY_MODEL_RUNNER_UNAVAILABLE'}
+        seconds = TIMEFRAMES.get(timeframe)
+        if source == 'deriv' and seconds and self.model_runner is not None:
+            rows = await self.db.market_candles.find(
+                {
+                    'source': source, 'symbol': symbol, 'timeframe': timeframe,
+                    'completeness': 'PROVIDER_OHLC',
+                    'epoch': {'$lte': time.time() - seconds},
+                },
+                {'_id': 0},
+            ).sort('epoch', -1).limit(5_000).to_list(5_000)
+            rows.reverse()
+            if len(rows) < 260:
+                legacy_result = {
+                    'status': 'NOT_READY', 'reason': 'INSUFFICIENT_CLOSED_PROVIDER_CANDLES',
+                    'closedProviderCandles': len(rows),
+                }
+            else:
+                try:
+                    trained = await asyncio.to_thread(
+                        self.model_runner.train_all, source, symbol, timeframe, rows,
+                    )
+                    legacy_result = {
+                        'status': trained.get('status', 'UNKNOWN'),
+                        'sampleCount': trained.get('sampleCount', 0),
+                        'closedProviderCandles': len(rows),
+                        'trainedAt': time.time(),
+                    }
+                    if trained.get('reason'):
+                        legacy_result['reason'] = trained['reason']
+                except Exception as exc:
+                    legacy_result = {
+                        'status': 'FAILED', 'reason': type(exc).__name__,
+                        'closedProviderCandles': len(rows),
+                    }
+                    logger.exception(
+                        'Legacy advisory model training failed for %s/%s/%s',
+                        source, symbol, timeframe,
+                    )
+        if self.deep_model_service is None:
+            return {'status': 'NOT_READY', 'reason': 'DEEP_MODEL_SERVICE_UNAVAILABLE', 'legacyAdapters': legacy_result}
+        report = await self.deep_model_service.train_market(source, symbol, timeframe)
+        report['legacyAdapters'] = legacy_result
+        return report
+
     async def _scheduled_model_refresh_loop(self):
         while True:
             await asyncio.sleep(self.model_refresh_interval)
             markets = sorted(set(self.deep_model_service.models) | set(self.deep_model_service.paper_models))
+            due_reports = await self.db.deep_model_training_runs.aggregate([
+                {'$match': {
+                    'source': 'deriv',
+                    'modelVersion': getattr(
+                        self.deep_model_service, 'MODEL_VERSION', None,
+                    ),
+                }},
+                {'$sort': {'generatedAt': -1}},
+                {'$group': {
+                    '_id': {
+                        'source': '$source', 'symbol': '$symbol',
+                        'timeframe': '$timeframe',
+                    },
+                    'report': {'$first': '$$ROOT'},
+                }},
+                {'$replaceRoot': {'newRoot': '$report'}},
+                {'$match': {'generatedAt': {'$lte': time.time() - self.model_refresh_interval}}},
+                {'$sort': {'generatedAt': 1}},
+                {'$limit': self.max_scheduled_model_markets},
+            ]).to_list(self.max_scheduled_model_markets)
+            markets = sorted(set(markets) | {
+                (row['source'], row['symbol'], row['timeframe'])
+                for row in due_reports
+                if row.get('source') and row.get('symbol') and row.get('timeframe')
+            })
             self.last_scheduled_model_refresh = time.time()
             if not markets:
                 self.scheduled_model_refresh_result = {
-                    'status': 'SKIPPED_NO_PROMOTED_MODELS', 'markets': 0,
+                    'status': 'SKIPPED_NO_DUE_MODEL_MARKETS', 'markets': 0,
                 }
                 continue
             results = {'LIVE_READY': 0, 'PAPER_READY': 0, 'BELOW_TIER_GATES': 0, 'NOT_READY': 0, 'FAILED': 0}
             for source, symbol, timeframe in markets:
                 try:
-                    report = await self.deep_model_service.train_market(source, symbol, timeframe)
+                    report = await self._train_market_models(source, symbol, timeframe)
                     result_status = report.get('status', 'FAILED')
                     results[result_status] = results.get(result_status, 0) + 1
                 except asyncio.CancelledError:
@@ -342,8 +416,18 @@ class SignalService:
 
     async def _next_model_bootstrap_market(self, now=None):
         now = time.time() if now is None else now
+        deriv = getattr(self, 'deriv', None)
+        symbols = list(getattr(deriv, 'symbols', []) or []) if deriv is not None else None
+        signal_symbols = getattr(deriv, 'candle_symbols', None)
+        if signal_symbols is not None:
+            symbols = list(signal_symbols)
+        if symbols == []:
+            return None
+        query = {'source': 'deriv', 'latestEpoch': {'$gte': now - FRESHNESS}}
+        if symbols is not None:
+            query['symbol'] = {'$in': symbols}
         instruments = await self.db.market_instruments.find(
-            {'source': 'deriv', 'latestEpoch': {'$gte': now - FRESHNESS}},
+            query,
             {'_id': 0, 'symbol': 1, 'market': 1, 'latestEpoch': 1},
         ).to_list(500)
         instruments.sort(key=lambda row: (
@@ -403,12 +487,11 @@ class SignalService:
                         'status': 'WAITING_FOR_WARMUP_HISTORY_OR_RETRY_WINDOW',
                         'completedAt': time.time(),
                     }
-                    next_scan_delay = min(30, self.model_bootstrap_interval)
                 else:
                     self.current_model_bootstrap_market = {
                         'source': market[0], 'symbol': market[1], 'timeframe': market[2],
                     }
-                    report = await self.deep_model_service.train_market(*market)
+                    report = await self._train_market_models(*market)
                     self.model_bootstrap_result = {
                         'source': market[0], 'symbol': market[1], 'timeframe': market[2],
                         'status': report.get('status', 'UNKNOWN'),
@@ -497,7 +580,7 @@ class SignalService:
                 )
                 if self.deep_model_service is None:
                     raise RuntimeError('DEEP_MODEL_SERVICE_UNAVAILABLE')
-                report = await self.deep_model_service.train_market(source, symbol, timeframe)
+                report = await self._train_market_models(source, symbol, timeframe)
                 status = str(report.get('status', 'UNKNOWN'))
                 await self.db.deep_model_online_progress.update_one(
                     key,
@@ -507,7 +590,9 @@ class SignalService:
                         'completedAt': time.time(),
                         'lastTrainingStatus': status,
                         'lastTrainingReason': report.get('reason'),
-                        'lastPromotionReady': report.get('status') == 'READY',
+                        'lastPromotionReady': report.get('status') in {'PAPER_READY', 'LIVE_READY'},
+                        'lastTrainingSamples': report.get('sampleCounts', {}),
+                        'legacyAdapterStatus': (report.get('legacyAdapters') or {}).get('status'),
                     }, '$unset': {'lastTrainingError': ''}},
                 )
                 logger.info('Online model retraining completed for %s/%s/%s: %s', source, symbol, timeframe, status)
@@ -689,6 +774,9 @@ class SignalService:
         while True:
             try:
                 symbols = list(getattr(self.deriv, 'symbols', []) or [])
+                signal_symbols = getattr(self.deriv, 'candle_symbols', None)
+                if signal_symbols is not None:
+                    symbols = list(signal_symbols)
                 instruments = await self.db.market_instruments.find(
                     {'source': 'deriv'},
                     {'_id': 0, 'symbol': 1, 'market': 1, 'latestEpoch': 1},
@@ -732,9 +820,20 @@ class SignalService:
     async def fresh_instruments(self):
         rows = await self.db.market_instruments.find(
             {'source': {'$in': self.settings['sources']}, 'latestEpoch': {'$gte': time.time() - FRESHNESS}}, {'_id': 0}).to_list(None)
+        signal_symbols = (
+            set(self.deriv.candle_symbols)
+            if self.deriv is not None and hasattr(self.deriv, 'candle_symbols')
+            else None
+        )
         return [
             row for row in rows
-            if row.get('source') == 'deriv'
+            if (
+                row.get('source') == 'deriv'
+                and (
+                    signal_symbols is None
+                    or row.get('symbol') in signal_symbols
+                )
+            )
             or row.get('verificationStatus') == 'CROSS_VALIDATED'
             or (row.get('source') == 'market-qx-observer-v2' and row.get('is_otc') is True and row.get('verificationStatus') == 'OTC_OBSERVATION_ONLY')
         ]
@@ -850,6 +949,11 @@ class SignalService:
         }
         if not all(members.values()):
             ensemble['reason'] = 'ENSEMBLE_MODELS_NOT_PROMOTED'
+            if not any(members.values()):
+                ensemble['shadowEligible'] = True
+                assessment['signalTier'] = 'PAPER_SHADOW'
+                assessment['modelEnsemble'] = ensemble
+                return assessment
         else:
             inference = await asyncio.to_thread(
                 self.model_runner.infer_all, source, symbol, timeframe, candles,
@@ -871,6 +975,8 @@ class SignalService:
             )
             if not ensemble['passed']:
                 ensemble['reason'] = 'ENSEMBLE_MODEL_DISAGREEMENT'
+            else:
+                assessment['signalTier'] = 'LIVE_VALIDATED'
         assessment['modelEnsemble'] = ensemble
         if not ensemble['passed']:
             reason = ensemble['reason']
@@ -1440,7 +1546,10 @@ class SignalService:
                 assessment = await self._require_live_model_ensemble(
                     assessment, source, symbol, timeframe, closed,
                 )
-                if assessment.get('direction') not in {'CALL', 'PUT'}:
+                if (
+                    assessment.get('direction') not in {'CALL', 'PUT'}
+                    or assessment.get('signalTier') != 'LIVE_VALIDATED'
+                ):
                     return None
 
         payload = {
@@ -1451,6 +1560,7 @@ class SignalService:
             'direction': assessment['direction'],
             'timeframe': timeframe,
             'setupConfidence': assessment['confidence'],
+            'validationTier': assessment.get('signalTier', 'OBSERVATION_ONLY'),
             'entryEpoch': entry,
             'generatedAt': now,
         }
@@ -1460,7 +1570,11 @@ class SignalService:
     def current_pre_signal(self, source, symbol, timeframe, now=None):
         now = time.time() if now is None else now
         payload = self._pre_signals.get((source, symbol, timeframe))
-        if not payload or payload['entryEpoch'] <= now:
+        if (
+            not payload
+            or payload.get('validationTier') != 'LIVE_VALIDATED'
+            or payload['entryEpoch'] <= now
+        ):
             return None
         return {**payload, 'countdownSeconds': max(0, int(payload['entryEpoch'] - now + 0.999))}
 
@@ -1708,7 +1822,8 @@ class SignalService:
                 or float(model.get('confidence', 0.0)) < MIN_LIVE_MODEL_PROBABILITY
             ):
                 return False
-            if not (assessment.get('modelEnsemble') or {}).get('passed'):
+            model_ensemble = assessment.get('modelEnsemble') or {}
+            if not model_ensemble.get('passed') and not model_ensemble.get('shadowEligible'):
                 return False
         model_consensus = assessment.get('modelConsensus') or {}
         model_probabilities = {
@@ -1728,6 +1843,9 @@ class SignalService:
             timeframe_min=seconds // 60,
             entry_epoch=entry,
         )
+        validation_tier = assessment.get('signalTier') or (
+            'LIVE_VALIDATED' if instrument['source'] == 'deriv' else 'OBSERVATION_ONLY'
+        )
         document = {
             'id': str(uuid.uuid4()), 'source': instrument['source'], 'symbol': instrument['symbol'], 'label': label_for(instrument),
             'timeframe': timeframe, 'timeframeSeconds': seconds, 'direction': assessment['direction'], 'confidence': assessment['confidence'],
@@ -1737,6 +1855,7 @@ class SignalService:
             'indicators': assessment.get('indicators', {}), 'higherTimeframe': assessment.get('higherTimeframe'),
             'is_otc': bool(instrument.get('is_otc') or assessment.get('is_otc')),
             'verification': 'OTC_FORECAST_UNVERIFIED' if instrument.get('is_otc') or assessment.get('is_otc') else 'CROSS_VALIDATED_DERIV' if instrument['source'] == 'market-qx-observer-v2' else 'DERIV_PROVIDER',
+            'validationTier': validation_tier,
             'forecast': assessment.get('forecast'),
             'provenance': 'LIVE_DERIV_PUBLIC' if instrument['source'] == 'deriv' else 'OTC_FORECAST_UNVERIFIED' if instrument.get('is_otc') or assessment.get('is_otc') else 'BROWSER_OBSERVED_CROSS_VALIDATED',
             'threshold': max(
@@ -1771,6 +1890,7 @@ class SignalService:
         await self.db.binary_signal_decisions.insert_one({
             'source': document['source'], 'symbol': document['symbol'], 'timeframe': document['timeframe'],
             'entryEpoch': document['entryEpoch'], 'direction': document['direction'], 'confidence': document['confidence'],
+            'validationTier': document['validationTier'],
             'finalSelectionScore': document['finalSelectionScore'], 'modelConsensus': document['modelConsensus'],
             'generatedAt': now,
         })
@@ -2187,12 +2307,19 @@ class SignalService:
     async def live(self, source='all', limit=50):
         now = time.time()
         base = self._source_filter(source)
-        upcoming = await self.db.live_signals.find({**base, 'status': 'PENDING', 'expiryEpoch': {'$gte': now - 3}}, {'_id': 0}).sort('entryEpoch', 1).limit(limit).to_list(limit)
+        upcoming = await self.db.live_signals.find({
+            **base, 'status': 'PENDING', 'expiryEpoch': {'$gte': now - 3},
+            'validationTier': 'LIVE_VALIDATED',
+        }, {'_id': 0}).sort('entryEpoch', 1).limit(limit).to_list(limit)
         recent = await self.db.live_signals.find({**base, 'status': {'$ne': 'PENDING'}}, {'_id': 0}).sort('generatedAt', -1).limit(limit).to_list(limit)
         pre_signals = [
             {**signal, 'countdownSeconds': max(0, int(signal['entryEpoch'] - now + 0.999))}
             for signal in self._pre_signals.values()
-            if signal['entryEpoch'] > now and (source == 'all' or signal['source'] == source)
+            if (
+                signal.get('validationTier') == 'LIVE_VALIDATED'
+                and signal['entryEpoch'] > now
+                and (source == 'all' or signal['source'] == source)
+            )
         ]
         pre_signals.sort(key=lambda signal: (signal['entryEpoch'], -signal['setupConfidence']))
         return {'now': now, 'upcoming': upcoming, 'recent': recent, 'preSignals': pre_signals[:limit], 'engine': self.status()}
@@ -2207,12 +2334,31 @@ class SignalService:
     async def stats(self, source='all', hours=24):
         since = time.time() - hours * 3600
         base = {**self._source_filter(source), 'generatedAt': {'$gte': since}}
-        pipeline = [{'$match': base}, {'$group': {'_id': {'source': '$source', 'timeframe': '$timeframe', 'status': '$status'}, 'n': {'$sum': 1}}}]
+        pipeline = [{
+            '$match': base,
+        }, {
+            '$group': {
+                '_id': {
+                    'source': '$source', 'timeframe': '$timeframe',
+                    'status': '$status',
+                    'validationTier': {'$ifNull': ['$validationTier', 'LEGACY_UNSPECIFIED']},
+                },
+                'n': {'$sum': 1},
+            },
+        }]
         rows = await self.db.live_signals.aggregate(pipeline).to_list(1000)
-        by_tf, by_source, overall = {}, {}, {'WIN': 0, 'LOSS': 0, 'TIE': 0, 'PENDING': 0, 'VOID': 0}
+        def empty_bucket():
+            return {'WIN': 0, 'LOSS': 0, 'TIE': 0, 'PENDING': 0, 'VOID': 0}
+
+        by_tf, by_source, by_tier, overall = {}, {}, {}, empty_bucket()
         for row in rows:
             key = row['_id']
-            for bucket in (by_tf.setdefault(key['timeframe'], dict(overall)), by_source.setdefault(key['source'], dict(overall)), overall):
+            for bucket in (
+                by_tf.setdefault(key['timeframe'], empty_bucket()),
+                by_source.setdefault(key['source'], empty_bucket()),
+                by_tier.setdefault(key['validationTier'], empty_bucket()),
+                overall,
+            ):
                 bucket[key['status']] = bucket.get(key['status'], 0) + row['n']
 
         def finish(bucket):
@@ -2224,6 +2370,7 @@ class SignalService:
             'overall': finish(overall),
             'byTimeframe': {k: finish(v) for k, v in by_tf.items()},
             'bySource': {k: finish(v) for k, v in by_source.items()},
+            'byValidationTier': {k: finish(v) for k, v in by_tier.items()},
             'byPair': [{'source': p['_id']['source'], 'symbol': p['_id']['symbol'], 'label': p['_id'].get('label') or p['_id']['symbol'], 'win': p['win'], 'loss': p['loss'], 'pending': p['pending'], 'total': p['total'], 'accuracy': round(p['win'] / (p['win'] + p['loss']) * 100, 1) if p['win'] + p['loss'] else None} for p in pairs],
             'measurement': 'ENTRY_CANDLE_OPEN_VS_CLOSE',
         }
@@ -2324,6 +2471,7 @@ class SignalService:
             'onlineLearning': {
                 'workerRunning': self._training_task is not None and not self._training_task.done(),
                 'queuedMarkets': len(self._online_training_queued),
+                'queueSize': self._online_training_queue.qsize(),
                 'triggerEveryVerifiedOutcomes': 50,
             },
             'scheduledModelRefresh': {

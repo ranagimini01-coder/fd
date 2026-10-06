@@ -1,0 +1,49 @@
+[33mcommit 0643fef195c035868eda085906b680adb320afc6[m
+Author: sohelnew007711-cmyk <sohelnew007711@gmail.com>
+Date:   Tue Oct 6 01:50:20 2026 +0000
+
+    Push main source code
+
+ delete mode 120000 master-Candel-v9-main/frontend/node_modules/.bin/acorn
+ delete mode 120000 master-Candel-v9-main/frontend/node_modules/.bin/baseline-browser-mapping
+ delete mode 120000 master-Candel-v9-main/frontend/node_modules/.bin/browserslist
+ delete mode 120000 master-Candel-v9-main/frontend/node_modules/.bin/eslint
+ delete mode 120000 master-Candel-v9-main/frontend/node_modules/.bin/jiti
+ delete mode 120000 master-Candel-v9-main/frontend/node_modules/.bin/js-yaml
+ delete mode 120000 master-Candel-v9-main/frontend/node_modules/.bin/jsesc
+ delete mode 120000 master-Candel-v9-main/frontend/node_modules/.bin/json5
+ delete mode 120000 master-Candel-v9-main/frontend/node_modules/.bin/nanoid
+ delete mode 120000 master-Candel-v9-main/frontend/node_modules/.bin/node-which
+ delete mode 120000 master-Candel-v9-main/frontend/node_modules/.bin/oxlint
+ delete mode 120000 master-Candel-v9-main/frontend/node_modules/.bin/parser
+ delete mode 120000 master-Candel-v9-main/frontend/node_modules/.bin/rolldown
+ delete mode 120000 master-Candel-v9-main/frontend/node_modules/.bin/semver
+ delete mode 120000 master-Candel-v9-main/frontend/node_modules/.bin/tsc
+ delete mode 120000 master-Candel-v9-main/frontend/node_modules/.bin/update-browserslist-db
+ delete mode 120000 master-Candel-v9-main/frontend/node_modules/.bin/vite
+ delete mode 120000 master-Candel-v9-main/frontend/node_modules/.bin/vitest
+ delete mode 120000 master-Candel-v9-main/frontend/node_modules/.bin/why-is-node-running
+ delete mode 100644 master-Candel-v9-main/frontend/node_modules/.tmp/tsconfig.app.tsbuildinfo
+ delete mode 100644 master-Candel-v9-main/frontend/node_modules/.tmp/tsconfig.node.tsbuildinfo
+ delete mode 100644 master-Candel-v9-main/frontend/node_modules/.vite/deps/@base-ui_react_button.js
+ delete mode 100644 master-Candel-v9-main/frontend/node_modules/.vite/deps/@base-ui_react_button.js.map
+ delete mode 100644 master-Candel-v9-main/frontend/node_modules/.vite/deps/@base-ui_react_checkbox.js
+ delete mode 100644 master-Candel-v9-main/frontend/node_modules/.vite/deps/@base-ui_react_checkbox.js.map
+ delete mode 100644 master-Candel-v9-main/frontend/node_modules/.vite/deps/@base-ui_react_dialog.js
+ delete mode 100644 master-Candel-v9-main/frontend/node_modules/.vite/deps/@base-ui_react_dialog.js.map
+ delete mode 100644 master-Candel-v9-main/frontend/node_modules/.vite/deps/@base-ui_react_input.js
+ delete mode 100644 master-Candel-v9-main/frontend/node_modules/.vite/deps/@base-ui_react_input.js.map
+ delete mode 100644 master-Candel-v9-main/frontend/node_modules/.vite/deps/@base-ui_react_menu.js
+ delete mode 100644 master-Candel-v9-main/frontend/node_modules/.vite/deps/@base-ui_react_menu.js.map
+ delete mode 100644 master-Candel-v9-main/frontend/node_modules/.vite/deps/@base-ui_react_merge-props.js
+ delete mode 100644 master-Candel-v9-main/frontend/node_modules/.vite/deps/@base-ui_react_popover.js
+ delete mode 100644 master-Candel-v9-main/frontend/node_modules/.vite/deps/@base-ui_react_popover.js.map
+ delete mode 100644 master-Candel-v9-main/frontend/node_modules/.vite/deps/@base-ui_react_select.js
+ delete mode 100644 master-Candel-v9-main/frontend/node_modules/.vite/deps/@base-ui_react_select.js.map
+ delete mode 100644 master-Candel-v9-main/frontend/node_modules/.vite/deps/@base-ui_react_tabs.js
+ delete mode 100644 master-Candel-v9-main/frontend/node_modules/.vite/deps/@base-ui_react_tabs.js.map
+ delete mode 100644 master-Candel-v9-main/frontend/node_modules/.vite/deps/@base-ui_react_use-render.js
+ delete mode 100644 master-Candel-v9-main/frontend/node_modules/.vite/deps/@base-ui_react_use-render.js.map
+ delete mode 100644 master-Candel-v9-main/frontend/node_modules/.vite/deps/@icons-pack_react-simple-icons.js
+ delete mode 100644 master-Candel-v9-main/frontend/node_modules/.vite/deps/@icons-pack_react-simple-icons.js.map
+ delete mode 100644 master-Candel-v9-main/frontend/node_modules/.vite

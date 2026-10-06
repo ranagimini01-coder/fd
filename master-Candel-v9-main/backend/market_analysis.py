@@ -79,8 +79,9 @@ class AnalysisService:
             try:
                 pairs = await self.store.db.market_instruments.find({
                     'latestEpoch': {'$gte': time.time() - FRESHNESS},
+                    'marketDataEligible': {'$ne': False},
                     '$or': [
-                        {'source': 'deriv'},
+                        {'source': 'deriv', 'signalEligible': True},
                         {'source': 'market-qx-observer-v2', 'verificationStatus': 'CROSS_VALIDATED'},
                     ],
                 }, {'_id': 0}).limit(100).to_list(100)

@@ -104,7 +104,11 @@ async def telemetry_snapshot(store, deriv, market_data, signals, postgres, deep_
         ]
         current_signals = [
             row for row in signals_for_chart
-            if row.get('status') == 'PENDING' and float(row.get('expiryEpoch', 0)) >= now
+            if (
+                row.get('status') == 'PENDING'
+                and row.get('validationTier') == 'LIVE_VALIDATED'
+                and float(row.get('expiryEpoch', 0)) >= now
+            )
         ]
         current_signal = min(current_signals, key=lambda row: abs(float(row['entryEpoch']) - now)) if current_signals else None
         analysis_signal = analysis.get('signal') or {}

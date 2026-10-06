@@ -14,10 +14,14 @@ sys.path.insert(0, str(ROOT / 'backend'))
 from deep_model_service import DeepModelService, _CandlestickSequenceModel
 from deriv_service import DERIV_USER_AGENT, websocket_user_agent_options
 from feature_engineering import _stochastic, compute_indicator_bundle
-from ml_model_adapters import Step8ModelRunner, ml_router
+from ml_model_adapters import Step8ModelRunner, _sigmoid, ml_router
 
 
 class TestDeepModelService(unittest.TestCase):
+    def test_legacy_model_sigmoid_is_finite_for_extreme_logits(self):
+        self.assertEqual(_sigmoid(-1e6), 1.0 / (1.0 + np.exp(40.0)))
+        self.assertEqual(_sigmoid(1e6), 1.0 / (1.0 + np.exp(-40.0)))
+
     def test_deriv_websocket_user_agent_uses_installed_client_api(self):
         options = websocket_user_agent_options()
 
@@ -112,6 +116,49 @@ class TestDeepModelService(unittest.TestCase):
         self.assertEqual(result['decision'], 'NO_SIGNAL')
         self.assertEqual(result['predictions'], {})
 
+    def test_step8_training_uses_targets_aligned_with_sequence_windows(self):
+        class Model:
+            def __init__(self):
+                self.targets = None
+
+            def fit(self, _features, targets):
+                self.targets = np.asarray(targets).tolist()
+                return {'status': 'trained'}
+
+        runner = Step8ModelRunner(max_agents=2)
+        models = {name: Model() for name in runner.models}
+        runner.models = models
+        sequence_features = np.asarray([[1.0], [2.0]])
+        all_features = np.asarray([[1.0], [2.0], [3.0], [4.0]])
+        labels = [0, 1, 1, 0]
+        prepared = {
+            'feature_bundle': {
+                'targets': {'lstm': labels, 'marl': labels},
+                'metadata': {'ml_ready': True},
+                'feature_key': 'deriv:R_10:1m:4',
+            },
+            'model_inputs': {
+                'lstm': sequence_features,
+                'transformer': sequence_features,
+                'xgboost': all_features,
+                'lightgbm': all_features,
+                'catboost': all_features,
+                'random_forest': all_features,
+                'marl': {'state': sequence_features},
+            },
+        }
+        runner.prepare_market = lambda *_args: prepared
+
+        report = runner.train_all('deriv', 'R_10', '1m', [{}] * 4)
+
+        self.assertEqual(report['status'], 'TRAINED')
+        self.assertEqual(models['lstm'].targets, [1, 0])
+        self.assertEqual(models['transformer'].targets, [1, 0])
+        self.assertEqual(models['marl'].targets, [1, 0])
+        self.assertEqual(models['xgboost'].targets, labels)
+        self.assertEqual(report['training_record']['samples'], len(labels))
+        self.assertEqual(runner.active_training, {})
+
     def test_training_samples_align_next_close_and_exclude_flat_outcomes(self):
         prices = [100 + index * 0.1 for index in range(260)]
         candles = []
@@ -189,10 +236,75 @@ class TestDeepModelService(unittest.TestCase):
         tier, ev = DeepModelService._promotion_tier(0.80)
         self.assertEqual(tier, 'LIVE')
         self.assertAlmostEqual(ev, 0.44)
+        tier, ev = DeepModelService._promotion_tier(0.80, calibration_pass=False)
+        self.assertEqual(tier, 'PAPER')
+        self.assertAlmostEqual(ev, 0.44)
         self.assertEqual(DeepModelService.MIN_LIVE_PROBABILITY, 0.85)
         tier, ev = DeepModelService._promotion_tier(0.55)
         self.assertIsNone(tier)
         self.assertLess(ev, 0)
+
+    def test_paper_fallback_keeps_live_calibration_gate_separate(self):
+        paper, _ = DeepModelService._promotion_tier(0.58, calibration_pass=False)
+        live, _ = DeepModelService._promotion_tier(0.80, calibration_pass=True)
+
+        self.assertEqual(paper, 'PAPER')
+        self.assertEqual(live, 'LIVE')
+        self.assertGreater(
+            DeepModelService.MIN_LIVE_PROBABILITY,
+            DeepModelService.OBSERVATION_MIN_WIN_RATE,
+        )
+
+    def test_failed_refresh_does_not_remove_a_previously_promoted_model(self):
+        class Cursor:
+            def sort(self, *_args):
+                return self
+
+            def limit(self, *_args):
+                return self
+
+            async def to_list(self, _limit):
+                return []
+
+        class Collection:
+            def __init__(self):
+                self.inserted = []
+                self.updates = []
+
+            def find(self, *_args):
+                return Cursor()
+
+            async def insert_one(self, document):
+                self.inserted.append(document)
+
+            async def update_one(self, *args, **kwargs):
+                self.updates.append((args, kwargs))
+
+        class Database:
+            def __init__(self):
+                self.market_candles = Collection()
+                self.deep_model_training_runs = Collection()
+                self.deep_model_registry = Collection()
+
+        database = Database()
+        service = DeepModelService(database)
+        existing = {'model': 'pytorch_lstm', 'version': DeepModelService.MODEL_VERSION}
+        key = ('deriv', 'R_10', '1m')
+        service.models[key] = existing
+        service._training_samples = lambda *_args: (
+            np.empty((0, 1, 1)), np.empty((0,), dtype=int), ['feature'],
+        )
+        service._fit_and_evaluate = lambda *_args: {
+            'status': 'BELOW_TIER_GATES',
+            'sampleCounts': {'test': DeepModelService.MIN_TEST_SAMPLES},
+        }
+
+        report = asyncio.run(service.train_market(*key))
+
+        self.assertEqual(report['registryAction'], 'RETAINED_PREVIOUS_PROMOTED_MODEL')
+        self.assertIs(service.models[key], existing)
+        self.assertEqual(database.deep_model_registry.updates, [])
+        self.assertEqual(len(database.deep_model_training_runs.inserted), 1)
 
     def test_trains_baseline_and_mlp_with_held_out_metrics(self):
         rng = np.random.default_rng(2026)

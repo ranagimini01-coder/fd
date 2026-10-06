@@ -5,6 +5,7 @@ from __future__ import annotations
 import os
 import sys
 import asyncio
+import time
 from types import SimpleNamespace
 from unittest.mock import AsyncMock
 
@@ -76,12 +77,154 @@ class TestSignalEngine:
         assert DEFAULT_SETTINGS['minAgree'] == 4
         assert DEFAULT_SETTINGS['deepScanFloor'] == 70
 
+    def test_unpromoted_models_keep_qualified_candidates_in_paper_shadow_tier(self):
+        service = SignalService.__new__(SignalService)
+        service.model_runner = SimpleNamespace(models={})
+        assessment = {'direction': 'CALL', 'confidence': 91}
+
+        result = asyncio.run(service._require_live_model_ensemble(
+            assessment, 'deriv', 'frxEURUSD', '1m', [],
+        ))
+
+        assert result['direction'] == 'CALL'
+        assert result['signalTier'] == 'PAPER_SHADOW'
+        assert result['modelEnsemble']['passed'] is False
+        assert result['modelEnsemble']['shadowEligible'] is True
+
+    def test_partially_promoted_model_ensemble_still_blocks_signals(self):
+        service = SignalService.__new__(SignalService)
+        service.model_runner = SimpleNamespace(models={})
+        service._adapter_ready_for_live = lambda name: name == 'xgboost'
+        assessment = {'direction': 'PUT', 'confidence': 90}
+
+        result = asyncio.run(service._require_live_model_ensemble(
+            assessment, 'deriv', 'frxEURUSD', '1m', [],
+        ))
+
+        assert result['direction'] == 'NO_SIGNAL'
+        assert result['modelEnsemble']['passed'] is False
+        assert result['modelEnsemble'].get('shadowEligible') is not True
+
+    def test_emitted_unpromoted_deriv_candidate_is_recorded_as_paper_shadow(self):
+        class Collection:
+            def __init__(self):
+                self.inserted = []
+
+            async def insert_one(self, document):
+                self.inserted.append(document)
+
+            async def update_one(self, *_args, **_kwargs):
+                return None
+
+        live_signals = Collection()
+        service = SignalService.__new__(SignalService)
+        service.db = SimpleNamespace(
+            live_signals=live_signals,
+            signal_history=Collection(),
+            binary_signal_decisions=Collection(),
+            model_observations=Collection(),
+        )
+        service.store = SimpleNamespace(event=AsyncMock())
+        service.settings = {'threshold': 85, 'deepScanFloor': 70}
+        service.last_signal_at = None
+        service._is_blacklisted = AsyncMock(return_value=False)
+        entry = int(time.time() // 60) * 60 + 60
+
+        emitted = asyncio.run(service.emit(
+            {'source': 'deriv', 'symbol': 'frxEURUSD', 'label': 'EUR/USD'},
+            '1m', entry,
+            {
+                'direction': 'CALL', 'confidence': 91, 'signalTier': 'PAPER_SHADOW',
+                'modelEnsemble': {
+                    'passed': False, 'shadowEligible': True,
+                    'reason': 'ENSEMBLE_MODELS_NOT_PROMOTED',
+                },
+            },
+            'STANDARD',
+        ))
+
+        assert emitted is True
+        assert live_signals.inserted[0]['validationTier'] == 'PAPER_SHADOW'
+        assert live_signals.inserted[0]['modelEnsemble']['passed'] is False
+
     def test_dynamic_threshold_requires_fifty_results_and_recovers(self):
         low = ['WIN'] * 29 + ['LOSS'] * 21
         high = ['WIN'] * 30 + ['LOSS'] * 20
         assert SignalService.adjusted_confidence_threshold(85, low) == 90
         assert SignalService.adjusted_confidence_threshold(85, high) == 85
         assert SignalService.adjusted_confidence_threshold(85, low[:20]) == 85
+
+    def test_signal_stats_keep_timeframe_buckets_independent(self):
+        grouped_rows = [
+            {'_id': {'source': 'deriv', 'timeframe': '1m', 'status': 'WIN', 'validationTier': 'PAPER_SHADOW'}, 'n': 1},
+            {'_id': {'source': 'deriv', 'timeframe': '1m', 'status': 'LOSS', 'validationTier': 'PAPER_SHADOW'}, 'n': 2},
+            {'_id': {'source': 'deriv', 'timeframe': '5m', 'status': 'WIN', 'validationTier': 'PAPER_SHADOW'}, 'n': 2},
+            {'_id': {'source': 'deriv', 'timeframe': '5m', 'status': 'LOSS', 'validationTier': 'PAPER_SHADOW'}, 'n': 1},
+        ]
+
+        class Cursor:
+            def __init__(self, rows):
+                self.rows = rows
+
+            async def to_list(self, _limit):
+                return self.rows
+
+        class Signals:
+            def aggregate(self, pipeline):
+                group_id = pipeline[1]['$group']['_id'] if len(pipeline) > 1 and '$group' in pipeline[1] else {}
+                return Cursor(grouped_rows if 'timeframe' in group_id else [])
+
+        service = SignalService.__new__(SignalService)
+        service.db = SimpleNamespace(live_signals=Signals())
+
+        stats = asyncio.run(service.stats(source='deriv', hours=24))
+
+        assert stats['overall']['WIN'] == 3
+        assert stats['overall']['LOSS'] == 3
+        assert stats['byTimeframe']['1m']['WIN'] == 1
+        assert stats['byTimeframe']['1m']['LOSS'] == 2
+        assert stats['byTimeframe']['5m']['WIN'] == 2
+        assert stats['byTimeframe']['5m']['LOSS'] == 1
+        assert stats['byValidationTier']['PAPER_SHADOW']['WIN'] == 3
+        assert stats['byValidationTier']['PAPER_SHADOW']['LOSS'] == 3
+
+    def test_live_feed_exposes_only_live_validated_upcoming_signals(self):
+        paper_shadow = {'id': 'paper', 'validationTier': 'PAPER_SHADOW'}
+        live_validated = {'id': 'live', 'validationTier': 'LIVE_VALIDATED'}
+
+        class Cursor:
+            def __init__(self, rows):
+                self.rows = rows
+
+            def sort(self, *_args):
+                return self
+
+            def limit(self, *_args):
+                return self
+
+            async def to_list(self, _limit):
+                return self.rows
+
+        class Signals:
+            def __init__(self):
+                self.queries = []
+
+            def find(self, query, *_args):
+                self.queries.append(query)
+                if query.get('status') == 'PENDING':
+                    return Cursor([live_validated] if query.get('validationTier') == 'LIVE_VALIDATED' else [paper_shadow, live_validated])
+                return Cursor([])
+
+        collection = Signals()
+        service = SignalService.__new__(SignalService)
+        service.db = SimpleNamespace(live_signals=collection)
+        service._pre_signals = {}
+        service.status = lambda: {}
+
+        board = asyncio.run(service.live(source='deriv'))
+
+        assert board['upcoming'] == [live_validated]
+        assert collection.queries[0]['validationTier'] == 'LIVE_VALIDATED'
 
     def test_bayesian_ensemble_weights_shift_with_verified_model_accuracy(self):
         weights = EnsembleFusion.bayesian_weights({

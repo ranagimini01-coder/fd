@@ -117,7 +117,7 @@ app.include_router(download_router)
 app.include_router(demo_router(db))
 app.include_router(postgres_router(db, postgres))
 app.include_router(signal_router(store, deriv if DERIV_ENABLED else None, signals))
-app.include_router(ml_router(step8_runner, deep_models))
+app.include_router(ml_router(step8_runner, deep_models, signals))
 app.include_router(telemetry_router(store, deriv if DERIV_ENABLED else None, market_data_router, signals, postgres, deep_models))
 app.include_router(provider_control_router(provider_controller))
 

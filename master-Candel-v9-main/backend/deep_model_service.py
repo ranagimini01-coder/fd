@@ -80,6 +80,8 @@ class DeepModelService:
         self.paper_models: Dict[tuple[str, str, str], Dict[str, Any]] = {}
         self.runtime_models: Dict[tuple[str, str, str], _CandlestickSequenceModel] = {}
         self.training_locks: Dict[tuple[str, str, str], asyncio.Lock] = {}
+        self.active_training: Dict[tuple[str, str, str], Dict[str, Any]] = {}
+        self._training_requests: Dict[tuple[str, str, str], int] = {}
 
     async def initialize(self):
         await self.db.deep_model_registry.create_index(
@@ -87,6 +89,9 @@ class DeepModelService:
         )
         await self.db.deep_model_training_runs.create_index(
             [('source', 1), ('symbol', 1), ('timeframe', 1), ('generatedAt', -1)],
+        )
+        await self.db.deep_model_training_runs.create_index(
+            [('source', 1), ('generatedAt', -1)],
         )
         rows = await self.db.deep_model_registry.find(
             {'$or': [{'readyForLive': True}, {'paperReady': True}]},
@@ -311,14 +316,14 @@ class DeepModelService:
         return error
 
     @classmethod
-    def _promotion_tier(cls, win_rate):
+    def _promotion_tier(cls, win_rate, calibration_pass=True):
         expected_value = (
             float(win_rate) * cls.ASSUMED_NET_PAYOUT - (1.0 - float(win_rate))
         )
         if expected_value <= 0:
             return None, expected_value
         if win_rate >= cls.LIVE_MIN_WIN_RATE:
-            return 'LIVE', expected_value
+            return ('LIVE' if calibration_pass else 'PAPER'), expected_value
         if win_rate >= cls.OBSERVATION_MIN_WIN_RATE:
             return 'PAPER', expected_value
         return None, expected_value
@@ -469,7 +474,9 @@ class DeepModelService:
         correct = int(np.sum(predictions == test_y))
         test_win_rate = correct / len(test_y)
         candidate_tier, test_expected_value = self._promotion_tier(test_win_rate)
-        promotion_tier = candidate_tier if calibration_pass else None
+        promotion_tier, _test_expected_value = self._promotion_tier(
+            test_win_rate, calibration_pass=calibration_pass,
+        )
         test_brier = self._brier(calibrated_test_probabilities, test_y)
         raw_test_brier = self._brier(raw_test_probabilities, test_y)
         baseline_probability = float(np.mean(train_y))
@@ -482,6 +489,8 @@ class DeepModelService:
             'status': 'LIVE_READY' if live_ready else 'PAPER_READY' if paper_ready else 'BELOW_TIER_GATES',
             'reason': (
                 'LIVE_TIER_GATES_PASSED' if live_ready else
+                'LIVE_CALIBRATION_GATE_FAILED_PAPER_FALLBACK' if paper_ready and candidate_tier == 'LIVE' and not calibration_pass else
+                'PAPER_SHADOW_CALIBRATION_UNVERIFIED' if paper_ready and not calibration_pass else
                 'OBSERVATION_TIER_GATES_PASSED' if paper_ready else
                 'CALIBRATION_GATE_FAILED' if candidate_tier is not None and not calibration_pass else
                 'OUT_OF_SAMPLE_WIN_RATE_OR_EXPECTED_VALUE_GATE_FAILED'
@@ -497,7 +506,9 @@ class DeepModelService:
                 'liveMinWinRate': self.LIVE_MIN_WIN_RATE,
                 'requiresPositiveExpectedValue': True,
                 'requiresChronologicalOutOfSampleTest': True,
-                'requiresIndependentCalibrationCheck': True,
+                'requiresIndependentCalibrationCheckForPaper': False,
+                'requiresIndependentCalibrationCheckForLive': True,
+                'paperPredictionsAreShadowOnly': True,
                 'minimumTestSamples': self.MIN_TEST_SAMPLES,
             },
             'sampleCounts': counts,
@@ -525,6 +536,7 @@ class DeepModelService:
             'promotionGates': {
                 'tieredWinRateAndExpectedValue': candidate_tier is not None,
                 'independentCalibrationCheck': calibration_pass,
+                'paperShadowOnly': paper_ready,
             },
         }
         if promotion_tier is not None:
@@ -532,6 +544,34 @@ class DeepModelService:
         return report
 
     async def train_market(self, source, symbol, timeframe):
+        if source != 'deriv' or timeframe not in TIMEFRAMES:
+            return {'status': 'NOT_READY', 'reason': 'VERIFIED_DERIV_SOURCE_REQUIRED'}
+        key = (source, symbol, timeframe)
+        requests = self._training_requests.get(key, 0)
+        self._training_requests[key] = requests + 1
+        if requests == 0:
+            self.active_training[key] = {
+                'source': source, 'symbol': symbol, 'timeframe': timeframe,
+                'status': 'RUNNING', 'startedAt': time.time(),
+            }
+        else:
+            self.active_training[key]['queuedCalls'] = requests
+        try:
+            report = await self._train_market(source, symbol, timeframe)
+            self.active_training[key]['lastStatus'] = report.get('status')
+            self.active_training[key]['lastTrainingAt'] = report.get('generatedAt')
+            self.active_training[key]['sampleCounts'] = report.get('sampleCounts', {})
+            return report
+        finally:
+            remaining = self._training_requests[key] - 1
+            if remaining:
+                self._training_requests[key] = remaining
+                self.active_training[key].pop('queuedCalls', None)
+            else:
+                self._training_requests.pop(key, None)
+                self.active_training.pop(key, None)
+
+    async def _train_market(self, source, symbol, timeframe):
         if source != 'deriv' or timeframe not in TIMEFRAMES:
             return {'status': 'NOT_READY', 'reason': 'VERIFIED_DERIV_SOURCE_REQUIRED'}
         key = (source, symbol, timeframe)
@@ -585,48 +625,36 @@ class DeepModelService:
                 'backfill': backfill,
             })
             artifact = report.pop('artifact', None)
-            await self.db.deep_model_training_runs.insert_one(dict(report))
             promotion_tier = report.get('promotionTier')
             has_test_result = int(report.get('sampleCounts', {}).get('test', 0)) >= self.MIN_TEST_SAMPLES
             if artifact is not None and promotion_tier in {'PAPER', 'LIVE'}:
                 live_ready = promotion_tier == 'LIVE'
                 paper_ready = promotion_tier == 'PAPER'
-                await self.db.deep_model_registry.update_one(
-                    {'source': source, 'symbol': symbol, 'timeframe': timeframe},
-                    {'$set': {
-                        'source': source, 'symbol': symbol, 'timeframe': timeframe,
-                        'modelVersion': self.MODEL_VERSION,
-                        'promotionTier': promotion_tier,
-                        'readyForLive': live_ready,
-                        'paperReady': paper_ready,
-                        'trainedAt': generated_at, 'artifact': artifact, 'metrics': report,
-                    }},
-                    upsert=True,
-                )
-                if live_ready:
-                    self.models[key] = artifact
-                    self.paper_models.pop(key, None)
+                if paper_ready and key in self.models:
+                    report['registryAction'] = 'RETAINED_LIVE_MODEL'
                 else:
-                    self.models.pop(key, None)
-                    self.paper_models[key] = artifact
-                self.runtime_models[key] = self._load_model(artifact)
-            elif has_test_result:
-                await self.db.deep_model_registry.update_one(
-                    {'source': source, 'symbol': symbol, 'timeframe': timeframe},
-                    {
-                        '$set': {
+                    await self.db.deep_model_registry.update_one(
+                        {'source': source, 'symbol': symbol, 'timeframe': timeframe},
+                        {'$set': {
                             'source': source, 'symbol': symbol, 'timeframe': timeframe,
                             'modelVersion': self.MODEL_VERSION,
-                            'promotionTier': None, 'readyForLive': False, 'paperReady': False,
-                            'trainedAt': generated_at, 'metrics': report,
-                        },
-                        '$unset': {'artifact': ''},
-                    },
-                    upsert=True,
-                )
-                self.models.pop(key, None)
-                self.paper_models.pop(key, None)
-                self.runtime_models.pop(key, None)
+                            'promotionTier': promotion_tier,
+                            'readyForLive': live_ready,
+                            'paperReady': paper_ready,
+                            'trainedAt': generated_at, 'artifact': artifact, 'metrics': report,
+                        }},
+                        upsert=True,
+                    )
+                    if live_ready:
+                        self.models[key] = artifact
+                        self.paper_models.pop(key, None)
+                    else:
+                        self.models.pop(key, None)
+                        self.paper_models[key] = artifact
+                    self.runtime_models[key] = self._load_model(artifact)
+            elif has_test_result:
+                report['registryAction'] = 'RETAINED_PREVIOUS_PROMOTED_MODEL'
+            await self.db.deep_model_training_runs.insert_one(dict(report))
             return report
 
     def predict_candles(self, source, symbol, timeframe, candles):
@@ -704,7 +732,22 @@ class DeepModelService:
         return self.predict_candles(source, symbol, timeframe, list(reversed(rows)))
 
     def status(self):
+        loaded_models = []
+        for key, artifact in sorted(self.models.items()):
+            loaded_models.append({
+                'source': key[0], 'symbol': key[1], 'timeframe': key[2],
+                'tier': 'LIVE', 'model': artifact['model'], 'version': artifact['version'],
+            })
+        for key, artifact in sorted(self.paper_models.items()):
+            loaded_models.append({
+                'source': key[0], 'symbol': key[1], 'timeframe': key[2],
+                'tier': 'PAPER', 'model': artifact['model'], 'version': artifact['version'],
+            })
         return {
+            'loadedModels': loaded_models,
+            'loadedModelCount': len(loaded_models),
+            'activelyTraining': list(self.active_training.values()),
+            'activeTrainingCount': len(self.active_training),
             'readyMarkets': [
                 {'source': source, 'symbol': symbol, 'timeframe': timeframe, 'model': artifact['model'], 'version': artifact['version']}
                 for (source, symbol, timeframe), artifact in sorted(self.models.items())
@@ -730,6 +773,42 @@ class DeepModelService:
                 'historicalEvaluation': 'PURGED_CHRONOLOGICAL_OUT_OF_SAMPLE',
             },
             'livePolicy': 'LIVE_TIER_MODELS_ONLY; observation-tier model predictions are shadow logged and never block signals',
+        }
+
+    async def runtime_status(self):
+        rows = await self.db.deep_model_training_runs.find(
+            {'source': 'deriv'},
+            {
+                '_id': 0, 'source': 1, 'symbol': 1, 'timeframe': 1,
+                'status': 1, 'reason': 1, 'promotionTier': 1,
+                'generatedAt': 1, 'closedProviderCandles': 1,
+                'sampleCounts': 1, 'backfill': 1,
+            },
+        ).sort('generatedAt', -1).limit(1000).to_list(1000)
+        latest = {}
+        for row in rows:
+            key = (row.get('source'), row.get('symbol'), row.get('timeframe'))
+            if key not in latest:
+                latest[key] = row
+        latest_training = [
+            {
+                'source': key[0], 'symbol': key[1], 'timeframe': key[2],
+                'status': row.get('status'), 'reason': row.get('reason'),
+                'promotionTier': row.get('promotionTier'),
+                'lastTrainingAt': row.get('generatedAt'),
+                'closedProviderCandles': row.get('closedProviderCandles', 0),
+                'sampleCounts': row.get('sampleCounts', {}),
+                'backfill': row.get('backfill'),
+            }
+            for key, row in sorted(
+                latest.items(), key=lambda item: item[1].get('generatedAt') or 0, reverse=True,
+            )
+        ]
+        return {
+            **self.status(),
+            'trainingMarketCount': len(latest_training),
+            'lastTrainingAt': latest_training[0]['lastTrainingAt'] if latest_training else None,
+            'trainingMarkets': latest_training,
         }
 
     async def evaluation_status(self):

@@ -1,2 +1,7 @@
 *.zip
 node_modules/
+
+# Local environment files and secrets
+**/.env
+**/.env.*
+!**/.env.example

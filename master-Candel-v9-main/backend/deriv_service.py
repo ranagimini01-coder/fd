@@ -12,7 +12,15 @@ from urllib.parse import parse_qs, urlsplit
 import websockets
 from websockets.exceptions import ConnectionClosed, InvalidHandshake, InvalidStatus
 
-from market_config import DERIV_URL_CANDIDATES, DERIV_ENABLED, TIMEFRAMES, FRESHNESS
+from market_config import (
+    DERIV_CANDLE_SYMBOLS,
+    DERIV_ENABLED,
+    DERIV_MAX_CANDLE_SYMBOLS,
+    DERIV_SYMBOLS,
+    DERIV_URL_CANDIDATES,
+    FRESHNESS,
+    TIMEFRAMES,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -24,6 +32,8 @@ HISTORY_WARMUP_TIMEFRAMES = ('1m', '5m', '15m', '1h')
 HISTORY_WARMUP_CANDLES = 200
 HISTORY_REQUEST_INTERVAL_SECONDS = 2.0
 HISTORY_RATE_LIMIT_RETRIES = 4
+TICK_SUBSCRIPTION_INTERVAL_SECONDS = 0.05
+CANDLE_SUBSCRIPTION_INTERVAL_SECONDS = 0.25
 
 
 def reconnect_delay_seconds(attempt):
@@ -77,7 +87,7 @@ _SYNTHETIC_VOLATILITY_SYMBOL = re.compile(
 
 
 def is_real_market_instrument(row):
-    """Keep supported FX/metals/indices plus Deriv's 24/7 volatility indices."""
+    """Keep supported non-OTC FX/metals/indices, crypto, and volatility indices."""
     symbol = str(row.get('underlying_symbol') or row.get('symbol') or '').strip()
     market = str(row.get('market') or '').strip().lower()
     submarket = str(row.get('submarket') or '').strip().lower()
@@ -94,6 +104,8 @@ def is_real_market_instrument(row):
             and _SYNTHETIC_VOLATILITY_SYMBOL.fullmatch(symbol) is not None
             and 'volatility' in label.lower()
         )
+    if market == 'cryptocurrency':
+        return True
     if market not in {'forex', 'commodities', 'indices'}:
         return False
     return market != 'commodities' or submarket == 'metals'
@@ -108,7 +120,7 @@ def format_market_data(raw_symbol: str, price_data: float):
     }
 
 
-async def subscribe_all_pairs(websocket, symbols=None):
+async def subscribe_all_pairs(websocket, symbols=None, send_interval=TICK_SUBSCRIPTION_INTERVAL_SECONDS):
     selected_symbols = list(symbols or [])
     if not selected_symbols:
         raise ValueError('NO_ELIGIBLE_SYMBOLS_TO_SUBSCRIBE')
@@ -116,10 +128,13 @@ async def subscribe_all_pairs(websocket, symbols=None):
         payload = {'ticks': symbol, 'subscribe': 1, 'req_id': request_id}
         await websocket.send(json.dumps(payload))
         logger.info('Subscribed to live feed for: %s (%s)', SYMBOL_MAPPING.get(symbol, symbol), symbol)
+        if send_interval > 0:
+            await asyncio.sleep(send_interval)
 
 
 async def subscribe_candle_streams(
     websocket, symbols=None, request_id_start=1, timeframes=CANDLE_STREAM_TIMEFRAMES,
+    send_interval=CANDLE_SUBSCRIPTION_INTERVAL_SECONDS,
 ):
     selected_symbols = list(symbols or [])
     if not selected_symbols:
@@ -143,6 +158,8 @@ async def subscribe_candle_streams(
                 'req_id': request_id,
             }))
             request_id += 1
+            if send_interval > 0:
+                await asyncio.sleep(send_interval)
 
 
 class DerivService:
@@ -154,7 +171,10 @@ class DerivService:
         self.last_error = None
         self.last_tick = None
         self.symbols = []
+        self.candle_symbols = []
+        self._symbol_markets = {}
         self.warmup_priority_symbols = set()
+        self._symbol_labels = {}
         self.task = None
         self.history_locks = {}
         self.history_loaded = {}
@@ -240,26 +260,82 @@ class DerivService:
     async def discover(self):
         payload = await self.request({'active_symbols': 'brief'})
         self.symbols = []
+        self.candle_symbols = []
         self.warmup_priority_symbols = set()
+        self._symbol_labels = {}
+        self._symbol_markets = {}
         seen = set()
+        configured_symbols = set() if DERIV_SYMBOLS == ['ALL'] else set(DERIV_SYMBOLS)
         for row in payload.get('active_symbols', []):
             symbol = row.get('underlying_symbol') or row.get('symbol')
             if not symbol:
                 continue
+            if symbol in seen:
+                continue
+            seen.add(symbol)
             label = row.get('underlying_symbol_name') or row.get('display_name') or symbol
+            exchange_open = row.get('exchange_is_open', True)
+            available = str(exchange_open).strip().lower() not in {'0', 'false', 'no'}
+            eligible = (
+                is_real_market_instrument(row)
+                and (not configured_symbols or symbol in configured_symbols)
+            )
+            if not eligible:
+                await self.store.instrument(
+                    'deriv', symbol, label, market=row.get('market'),
+                    submarket=row.get('submarket'), providerSymbol=symbol,
+                    available=available, marketDataEligible=False,
+                    signalEligible=False, supportedTimeframes=list(TIMEFRAMES),
+                    provenance='DERIV_PUBLIC_API',
+                )
+                continue
+            self._symbol_labels[symbol] = label
+            self._symbol_markets[symbol] = str(row.get('market') or '').lower()
             await self.store.instrument(
                 'deriv', symbol, label, market=row.get('market'),
                 submarket=row.get('submarket'), providerSymbol=symbol,
-                available=bool(row.get('exchange_is_open', True)),
+                available=available, marketDataEligible=True, signalEligible=False,
                 supportedTimeframes=list(TIMEFRAMES), provenance='DERIV_PUBLIC_API',
             )
             if str(row.get('market') or '').lower() in {'synthetic_index', 'cryptocurrency'}:
                 self.warmup_priority_symbols.add(symbol)
-            if symbol not in seen:
+            if available:
                 self.symbols.append(symbol)
-                seen.add(symbol)
+        instruments_collection = getattr(getattr(self.store, 'db', None), 'market_instruments', None)
+        if instruments_collection is not None:
+            await instruments_collection.update_many(
+                {'source': 'deriv', 'symbol': {'$nin': list(seen)}},
+                {'$set': {
+                    'available': False, 'marketDataEligible': False,
+                    'signalEligible': False,
+                }},
+            )
         if not self.symbols:
             raise ValueError('NO_CONFIGURED_SYMBOLS_AVAILABLE')
+        if DERIV_CANDLE_SYMBOLS == ['ALL']:
+            market_priority = {
+                'forex': 0,
+                'cryptocurrency': 1,
+                'synthetic_index': 2,
+                'indices': 2,
+                'commodities': 3,
+            }
+            preferred_symbols = sorted(
+                self.symbols,
+                key=lambda symbol: market_priority.get(self._symbol_markets.get(symbol), 4),
+            )
+        else:
+            preferred_symbols = [
+                symbol for symbol in DERIV_CANDLE_SYMBOLS if symbol in self.symbols
+            ]
+            if not preferred_symbols and configured_symbols:
+                preferred_symbols = list(self.symbols)
+        self.candle_symbols = preferred_symbols[:DERIV_MAX_CANDLE_SYMBOLS]
+        for symbol in self.candle_symbols:
+            await self.store.instrument(
+                'deriv', symbol, self._symbol_labels.get(symbol, symbol),
+                marketDataEligible=True, signalEligible=True,
+            )
 
     async def history(self, symbol, timeframe, count=300, force=False):
         if TIMEFRAMES[timeframe] < 60:
@@ -327,11 +403,11 @@ class DerivService:
 
         priority_symbols = set(self.warmup_priority_symbols)
         priority_symbols.update(
-            symbol for symbol in self.symbols
+            symbol for symbol in self.candle_symbols
             if _SYNTHETIC_VOLATILITY_SYMBOL.fullmatch(symbol)
         )
-        ordered_symbols = sorted(priority_symbols.intersection(self.symbols))
-        ordered_symbols.extend(symbol for symbol in self.symbols if symbol not in priority_symbols)
+        ordered_symbols = sorted(priority_symbols.intersection(self.candle_symbols))
+        ordered_symbols.extend(symbol for symbol in self.candle_symbols if symbol not in priority_symbols)
         for symbol in ordered_symbols:
             for timeframe in HISTORY_WARMUP_TIMEFRAMES:
                 if timeframe in TIMEFRAMES:
@@ -406,7 +482,7 @@ class DerivService:
         retry_attempt = 0
         delay = reconnect_delay_seconds(retry_attempt)
         while True:
-            warm = ping = None
+            warm = ping = candle_subscription = None
             try:
                 self.state = 'CONNECTING'
                 self.accepted.clear()
@@ -425,17 +501,20 @@ class DerivService:
                     await subscribe_all_pairs(ws, self.symbols)
                     candle_req_id_start = len(self.symbols) + 1
                     candle_request_id = candle_req_id_start
-                    for symbol in self.symbols:
+                    for symbol in self.candle_symbols:
                         for timeframe in CANDLE_STREAM_TIMEFRAMES:
                             if timeframe in TIMEFRAMES:
                                 self.request_streams[candle_request_id] = (
                                     symbol, 'candle', timeframe,
                                 )
                                 candle_request_id += 1
-                    await subscribe_candle_streams(
-                        ws, self.symbols, request_id_start=candle_req_id_start,
-                    )
-                    await asyncio.sleep(.04)
+                    if self.candle_symbols:
+                        candle_subscription = asyncio.create_task(
+                            subscribe_candle_streams(
+                                ws, self.candle_symbols,
+                                request_id_start=candle_req_id_start,
+                            )
+                        )
                     self.state = 'CONNECTED'
                     self.last_error = None
                     retry_attempt = 0
@@ -454,6 +533,9 @@ class DerivService:
 
                     ping = asyncio.create_task(keepalive())
                     while True:
+                        if candle_subscription is not None and candle_subscription.done():
+                            candle_subscription.result()
+                            candle_subscription = None
                         try:
                             data = json.loads(await asyncio.wait_for(ws.recv(), 65))
                         except (
@@ -558,7 +640,7 @@ class DerivService:
                 await self._record_reconnect_warning(exc, delay)
             finally:
                 self.accepted.clear()
-                await self._cancel_background_tasks(warm, ping)
+                await self._cancel_background_tasks(warm, ping, candle_subscription)
             await asyncio.sleep(delay)
 
     def status(self):
@@ -593,6 +675,8 @@ class DerivService:
         return dict(
             source='deriv', state=state, lastTick=self.last_tick, ageSeconds=age,
             symbolCount=len(self.accepted), requestedCount=len(self.symbols),
+            signalSymbols=sorted(self.candle_symbols),
+            signalSymbolCount=len(self.candle_symbols),
             acceptedCount=len(self.accepted), rejectedCount=len(self.rejected),
             acceptedSymbols=sorted(self.accepted),
             rejectedSymbols=[{'symbol': k, 'code': v} for k, v in sorted(self.rejected.items())],

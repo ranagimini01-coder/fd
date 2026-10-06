@@ -45,7 +45,13 @@ class MarketStore:
         await self.db.market_instruments.update_one({'source': source, 'symbol': symbol}, {'$set': {'label': label or symbol, 'identity': identity(label or symbol), **fields}}, upsert=True)
 
     async def resolve(self, source, symbol):
-        return await self.db.market_instruments.find_one({'source': source, '$or': [{'symbol': symbol}, {'identity': identity(symbol)}]}, {'_id': 0})
+        query = {
+            'source': source,
+            '$or': [{'symbol': symbol}, {'identity': identity(symbol)}],
+        }
+        if source == 'deriv':
+            query['marketDataEligible'] = {'$ne': False}
+        return await self.db.market_instruments.find_one(query, {'_id': 0})
 
     def candle(self, source, symbol, timeframe, timestamp, o, h, low, close, **extra):
         seconds = TIMEFRAMES[timeframe]

@@ -9,7 +9,13 @@ from fastapi import APIRouter, Depends, Header, HTTPException
 
 from deriv_service import DerivService
 from market_auth import authorize_operator_key
-from market_config import DERIV_ENABLED, DERIV_SYMBOLS, PROVIDER_CONTROL_KEY_SHA256
+from market_config import (
+    DERIV_CANDLE_SYMBOLS,
+    DERIV_ENABLED,
+    DERIV_MAX_CANDLE_SYMBOLS,
+    DERIV_SYMBOLS,
+    PROVIDER_CONTROL_KEY_SHA256,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
 OBSERVER_SCRIPT = ROOT / 'extensions' / 'market-qx-observer-v2' / 'playwright' / 'playwright_observer.py'
@@ -28,7 +34,12 @@ class ProviderController:
             'deriv': {
                 'enabled': DERIV_ENABLED,
                 'symbols': list(DERIV_SYMBOLS),
-                'markets': ['forex', 'metals', 'non-OTC indices'],
+                'candleSymbols': list(DERIV_CANDLE_SYMBOLS),
+                'maxCandleSymbols': DERIV_MAX_CANDLE_SYMBOLS,
+                'markets': [
+                    'forex', 'metals', 'non-OTC indices',
+                    'selected volatility indices', 'cryptocurrency',
+                ],
                 'otc': False,
             },
             'ws_sniffer': {

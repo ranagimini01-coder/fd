@@ -19,7 +19,7 @@ from market_ml_orchestrator import build_market_ml_orchestrator
 
 
 def _sigmoid(value: float) -> float:
-    value = float(value)
+    value = float(np.clip(value, -40.0, 40.0))
     return 1.0 / (1.0 + np.exp(-value))
 
 
@@ -380,6 +380,8 @@ class Step8ModelRunner:
         }
         self.training_history: List[Dict[str, Any]] = []
         self.last_inference: Dict[str, Any] | None = None
+        self.active_training: Dict[str, Dict[str, Any]] = {}
+        self.model_training_samples: Dict[str, int] = {}
         self.lock = threading.Lock()
 
     def prepare_market(self, source: str, symbol: str, timeframe: str, candles: Sequence[Dict[str, Any]]) -> Dict[str, Any]:
@@ -387,8 +389,36 @@ class Step8ModelRunner:
         return prepared
 
     def train_all(self, source: str, symbol: str, timeframe: str, candles: Sequence[Dict[str, Any]]) -> Dict[str, Any]:
+        key = f'{source}:{symbol}:{timeframe}'
+        self.active_training[key] = {
+            'source': source, 'symbol': symbol, 'timeframe': timeframe,
+            'startedAt': time.time(), 'sampleCount': 0, 'phase': 'PREPARING',
+        }
+        try:
+            result = self._train_all(source, symbol, timeframe, candles)
+            self.active_training[key]['sampleCount'] = len(
+                result['prepared']['feature_bundle']['targets']['lstm'],
+            )
+            return result
+        finally:
+            self.active_training.pop(key, None)
+
+    def _train_all(self, source: str, symbol: str, timeframe: str, candles: Sequence[Dict[str, Any]]) -> Dict[str, Any]:
         prepared = self.prepare_market(source, symbol, timeframe, candles)
-        labels = prepared['feature_bundle']['labels']
+        labels = np.asarray(prepared['feature_bundle']['targets']['lstm'], dtype=int)
+        key = f'{source}:{symbol}:{timeframe}'
+        if key in self.active_training:
+            self.active_training[key].update({
+                'sampleCount': len(labels), 'phase': 'FITTING',
+            })
+        if not prepared['feature_bundle']['metadata']['ml_ready'] or len(labels) == 0:
+            return {
+                'status': 'NOT_READY',
+                'reason': 'INSUFFICIENT_CLOSED_CANDLE_FEATURES',
+                'sampleCount': len(labels),
+                'prepared': prepared,
+                'models': {},
+            }
         batch = {name: prepared['model_inputs'][name] for name in self.models}
         with self.lock:
             model_results = {}
@@ -401,23 +431,31 @@ class Step8ModelRunner:
                         {'symbol': symbol, 'state_index': index}
                         for index in range(state_count)
                     ]
-                    fit_result = model.fit(states, labels[:state_count])
+                    fit_result = model.fit(states, labels[-state_count:])
                 elif name in {'lstm', 'transformer'}:
-                    fit_result = model.fit(feature_matrix, labels[:max(1, feature_matrix.shape[0])])
+                    sample_count = min(feature_matrix.shape[0], len(labels))
+                    fit_result = model.fit(feature_matrix[-sample_count:], labels[-sample_count:])
                 else:
-                    fit_result = model.fit(feature_matrix, labels[:max(1, feature_matrix.shape[0])])
+                    sample_count = min(feature_matrix.shape[0], len(labels))
+                    fit_result = model.fit(feature_matrix[:sample_count], labels[:sample_count])
                 model_results[name] = fit_result
+                self.model_training_samples[name] = len(labels)
             train_record = {
                 'source': source,
                 'symbol': symbol,
                 'timeframe': timeframe,
                 'timestamp': time.time(),
                 'candles': len(candles),
+                'samples': len(labels),
                 'models': model_results,
-                'feature_key': prepared['feature_bundle']['feature_key'] if 'feature_key' in prepared['feature_bundle'] else prepared['feature_bundle']['metadata'].get('feature_key'),
+                'feature_key': prepared['feature_bundle']['feature_key'],
             }
             self.training_history.append(train_record)
-            return {'prepared': prepared, 'models': model_results, 'training_record': train_record}
+            return {
+                'status': 'TRAINED', 'sampleCount': len(labels),
+                'prepared': prepared, 'models': model_results,
+                'training_record': train_record,
+            }
 
     def infer_all(self, source: str, symbol: str, timeframe: str, candles: Sequence[Dict[str, Any]]) -> Dict[str, Any]:
         prepared = self.prepare_market(source, symbol, timeframe, candles)
@@ -470,7 +508,18 @@ class Step8ModelRunner:
             'ready': any(model.state.trained for model in self.models.values()),
             'readyForLive': False,
             'promotionPolicy': 'Legacy Step8 adapters are advisory until independently validated and promoted.',
-            'models': {name: {'trained': model.state.trained, 'training_count': model.state.training_count, 'last_prediction': model.state.last_prediction} for name, model in self.models.items()},
+            'models': {
+                name: {
+                    'trained': model.state.trained,
+                    'loadedInMemory': True,
+                    'training_count': model.state.training_count,
+                    'training_samples': self.model_training_samples.get(name, 0),
+                    'last_fit_at': model.state.last_fit_at,
+                    'last_prediction': model.state.last_prediction,
+                }
+                for name, model in self.models.items()
+            },
+            'active_training': list(self.active_training.values()),
             'last_training': self.training_history[-1] if self.training_history else None,
             'last_inference': self.last_inference,
             'model_stack': ['lstm', 'transformer', 'xgboost', 'lightgbm', 'catboost', 'random_forest', 'marl'],
@@ -481,7 +530,7 @@ def build_step8_runner(max_agents: int = 500) -> Step8ModelRunner:
     return Step8ModelRunner(max_agents=max_agents)
 
 
-def ml_router(runner: Step8ModelRunner | None = None, deep_models=None):
+def ml_router(runner: Step8ModelRunner | None = None, deep_models=None, signal_service=None):
     from fastapi import APIRouter, Body, Depends, HTTPException
 
     from market_auth import require_operator_key
@@ -491,18 +540,31 @@ def ml_router(runner: Step8ModelRunner | None = None, deep_models=None):
     @router.get('/ml/status')
     async def get_ml_status():
         deep_status = deep_models.status() if deep_models is not None else {'readyMarketCount': 0}
+        if deep_models is not None and hasattr(deep_models, 'runtime_status'):
+            deep_status = await deep_models.runtime_status()
         if deep_models is not None and hasattr(deep_models, 'evaluation_status'):
             deep_status['evaluation'] = await deep_models.evaluation_status()
-        return {
+        payload = {
             **model_runner.status(),
             'deepModels': deep_status,
         }
+        if signal_service is not None:
+            signal_status = signal_service.status()
+            payload['activeLearning'] = signal_status.get('onlineLearning', {})
+            payload['trainingWorkers'] = {
+                'onlineLearning': signal_status.get('onlineLearning', {}),
+                'scheduledRefresh': signal_status.get('scheduledModelRefresh', {}),
+                'bootstrap': signal_status.get('automaticModelBootstrap', {}),
+            }
+        return payload
 
     @router.post('/ml/train')
     async def train_ml(payload: Dict[str, Any] = Body(default_factory=dict), _operator=Depends(require_operator_key)):
         source = str(payload.get('source', 'deriv'))
         symbol = str(payload.get('symbol', 'EUR/USD'))
         timeframe = str(payload.get('timeframe', '1m'))
+        if signal_service is not None and deep_models is not None:
+            return await signal_service._train_market_models(source, symbol, timeframe)
         if deep_models is not None:
             return await deep_models.train_market(source, symbol, timeframe)
         candles = payload.get('candles') or payload.get('market_data') or []

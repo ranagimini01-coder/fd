@@ -50,6 +50,21 @@ _configured_symbols = [s.strip() for s in (_env('DERIV_SYMBOLS', '') or '').spli
 _all_pair_mode = not _configured_symbols or any(symbol.upper() in {'ALL', '*', 'ALL_PAIRS'} for symbol in _configured_symbols)
 DERIV_SYMBOLS = ['ALL'] if _all_pair_mode else list(dict.fromkeys(_configured_symbols))
 
+_default_candle_symbols = 'ALL'
+_configured_candle_symbols = [
+    symbol.strip()
+    for symbol in (_env('DERIV_CANDLE_SYMBOLS', _default_candle_symbols) or '').split(',')
+    if symbol.strip()
+]
+_all_candle_mode = any(
+    symbol.upper() in {'ALL', '*', 'ALL_PAIRS'}
+    for symbol in _configured_candle_symbols
+)
+DERIV_CANDLE_SYMBOLS = ['ALL'] if _all_candle_mode else list(dict.fromkeys(_configured_candle_symbols))
+DERIV_MAX_CANDLE_SYMBOLS = max(
+    1, min(100, _env('DERIV_MAX_CANDLE_SYMBOLS', 100, cast=int)),
+)
+
 _default_timeframes = '1s,5s,15s,1m,5m,10m,15m,30m,1h'
 TIMEFRAMES = {
     v: int(v[:-1]) * {'s': 1, 'm': 60, 'h': 3600}[v[-1]]

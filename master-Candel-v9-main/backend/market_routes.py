@@ -56,7 +56,15 @@ def market_router(store, deriv, analysis, agent_pool=None):
 
     @router.get('/instruments', response_model=Items)
     async def instruments(source: Source | None = None):
-        return {'items': await store.db.market_instruments.find({'source': source} if source else {}, {'_id': 0}).limit(1000).to_list(1000)}
+        query = {'source': source} if source else {}
+        if source == 'deriv':
+            query['marketDataEligible'] = {'$ne': False}
+        elif source is None:
+            query['$or'] = [
+                {'source': {'$ne': 'deriv'}},
+                {'marketDataEligible': {'$ne': False}},
+            ]
+        return {'items': await store.db.market_instruments.find(query, {'_id': 0}).limit(1000).to_list(1000)}
 
     @router.get('/observation', response_model=Document)
     async def observation():
@@ -102,7 +110,19 @@ def market_router(store, deriv, analysis, agent_pool=None):
 
     @router.get('/top-pairs', response_model=Items)
     async def top_pairs():
-        rows = await store.db.market_analyses.find({'timeframe': '1m', 'latestEpoch': {'$gte': time.time() - FRESHNESS - 60}, 'quality.status': 'VALID', 'candleCount': {'$gte': 60}}, {'_id': 0}).sort([('quality.score', -1), ('candleCount', -1)]).limit(15).to_list(15)
+        signal_symbols = getattr(deriv, 'candle_symbols', None)
+        query = {
+            'timeframe': '1m',
+            'latestEpoch': {'$gte': time.time() - FRESHNESS - 60},
+            'quality.status': 'VALID',
+            'candleCount': {'$gte': 60},
+        }
+        if signal_symbols is not None:
+            query['$or'] = [
+                {'source': {'$ne': 'deriv'}},
+                {'source': 'deriv', 'symbol': {'$in': list(signal_symbols)}},
+            ]
+        rows = await store.db.market_analyses.find(query, {'_id': 0}).sort([('quality.score', -1), ('candleCount', -1)]).limit(15).to_list(15)
         return {'items': [{'source': r['source'], 'symbol': r['symbol'], 'quality': r['quality']['score'], 'candleCount': r['candleCount'], 'signal': 'NO_SIGNAL', 'qualification': 'DATA_QUALITY_ONLY_NOT_WIN_PROBABILITY'} for r in rows]}
 
     @router.get('/history', response_model=Items)

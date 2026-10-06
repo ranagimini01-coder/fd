@@ -159,7 +159,7 @@ class TestDerivRetry(unittest.TestCase):
             self.assertEqual(reloaded.DERIV_SYMBOLS, ['US500', 'frxXAUUSD'])
         importlib.reload(market_config)
 
-    def test_discovery_adds_active_synthetic_volatility_symbols(self):
+    def test_discovery_filters_unsupported_symbols_and_prioritizes_forex_signal_pairs(self):
         class Store:
             def __init__(self):
                 self.instruments = []
@@ -223,6 +223,12 @@ class TestDerivRetry(unittest.TestCase):
                         'market': 'indices',
                         'submarket': 'stock_indices',
                     },
+                    {
+                        'underlying_symbol': 'OTC_SPC',
+                        'underlying_symbol_name': 'Volatility 100 Index OTC',
+                        'market': 'indices',
+                        'submarket': 'stock_indices_OTC',
+                    },
                 ],
             }
 
@@ -230,9 +236,57 @@ class TestDerivRetry(unittest.TestCase):
         asyncio.run(service.discover())
 
         self.assertEqual(service.symbols, [
-            'frxEURUSD', 'R_75', '1HZ100V', 'BOOM1000', 'cryBTCUSD', 'frxXAUUSD', 'frxXBRUSD', 'US500',
+            'frxEURUSD', 'R_75', '1HZ100V', 'cryBTCUSD', 'frxXAUUSD', 'US500',
         ])
-        self.assertEqual(len(store.instruments), 8)
+        self.assertEqual(service.candle_symbols, [
+            'frxEURUSD', 'cryBTCUSD', 'R_75', '1HZ100V', 'US500', 'frxXAUUSD',
+        ])
+        self.assertTrue(any(kwargs.get('signalEligible') for _args, kwargs in store.instruments))
+        rejected = {
+            args[1]: kwargs for args, kwargs in store.instruments
+            if args[1] in {'BOOM1000', 'frxXBRUSD', 'OTC_SPC'}
+        }
+        self.assertEqual(set(rejected), {'BOOM1000', 'frxXBRUSD', 'OTC_SPC'})
+        self.assertTrue(all(not item['marketDataEligible'] for item in rejected.values()))
+
+    def test_discovery_honors_explicit_pair_filter_and_skips_closed_pairs(self):
+        class Store:
+            async def instrument(self, *_args, **_kwargs):
+                return None
+
+        service = DerivService(Store())
+
+        async def active_symbols(_request):
+            return {'active_symbols': [
+                {
+                    'underlying_symbol': 'frxEURUSD',
+                    'underlying_symbol_name': 'EUR/USD',
+                    'market': 'forex',
+                    'submarket': 'major_pairs',
+                    'exchange_is_open': 0,
+                },
+                {
+                    'underlying_symbol': 'frxGBPUSD',
+                    'underlying_symbol_name': 'GBP/USD',
+                    'market': 'forex',
+                    'submarket': 'major_pairs',
+                    'exchange_is_open': 1,
+                },
+                {
+                    'underlying_symbol': 'OTC_EURUSD',
+                    'underlying_symbol_name': 'EUR/USD OTC',
+                    'market': 'forex',
+                    'submarket': 'major_pairs',
+                    'exchange_is_open': 1,
+                },
+            ]}
+
+        service.request = active_symbols
+        with patch('deriv_service.DERIV_SYMBOLS', ['frxEURUSD', 'frxGBPUSD']):
+            asyncio.run(service.discover())
+
+        self.assertEqual(service.symbols, ['frxGBPUSD'])
+        self.assertEqual(service.candle_symbols, ['frxGBPUSD'])
 
     def test_http_520_rotates_to_next_endpoint_without_nested_retry(self):
         class Store:
@@ -306,7 +360,7 @@ class TestDerivRetry(unittest.TestCase):
                 self.messages.append(json.loads(message))
 
         websocket = WebSocket()
-        asyncio.run(subscribe_candle_streams(websocket, ['frxEURUSD'], 100))
+        asyncio.run(subscribe_candle_streams(websocket, ['frxEURUSD'], 100, send_interval=0))
 
         self.assertEqual(
             [(message['granularity'], message['req_id']) for message in websocket.messages],
@@ -346,6 +400,7 @@ class TestDerivRetry(unittest.TestCase):
     def test_warm_prioritizes_24_7_markets_and_loads_required_timeframes(self):
         service = DerivService(object())
         service.symbols = ['frxEURUSD', 'R_75']
+        service.candle_symbols = ['frxEURUSD', 'R_75']
         service.warmup_priority_symbols = {'R_75'}
         requested = []
 
