@@ -1,0 +1,3170 @@
+{
+  "eur-usd-regular": {
+    "symbol": "EUR/USD",
+    "base": 1.08428,
+    "precision": 5,
+    "category": "Currencies",
+    "id": "eur-usd-regular",
+    "label": "EUR/USD",
+    "shortLabel": "EUR/USD",
+    "session": "Regular",
+    "payoutPercent": 72,
+    "payout": "72%",
+    "change": "-0.08%",
+    "up": false,
+    "countries": [
+      "eu",
+      "us"
+    ]
+  },
+  "eur-usd": {
+    "symbol": "EUR/USD",
+    "base": 1.08428,
+    "precision": 5,
+    "category": "Currencies",
+    "id": "eur-usd",
+    "label": "EUR/USD (OTC)",
+    "shortLabel": "EUR/USD",
+    "session": "OTC",
+    "payoutPercent": 80,
+    "payout": "80%",
+    "change": "-0.08%",
+    "up": false,
+    "countries": [
+      "eu",
+      "us"
+    ]
+  },
+  "gbp-usd-regular": {
+    "symbol": "GBP/USD",
+    "base": 1.27145,
+    "precision": 5,
+    "category": "Currencies",
+    "id": "gbp-usd-regular",
+    "label": "GBP/USD",
+    "shortLabel": "GBP/USD",
+    "session": "Regular",
+    "payoutPercent": 73,
+    "payout": "73%",
+    "change": "+0.09%",
+    "up": true,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "gbp-usd": {
+    "symbol": "GBP/USD",
+    "base": 1.27145,
+    "precision": 5,
+    "category": "Currencies",
+    "id": "gbp-usd",
+    "label": "GBP/USD (OTC)",
+    "shortLabel": "GBP/USD",
+    "session": "OTC",
+    "payoutPercent": 81,
+    "payout": "81%",
+    "change": "+0.09%",
+    "up": true,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "usd-jpy-regular": {
+    "symbol": "USD/JPY",
+    "base": 153.428,
+    "precision": 3,
+    "category": "Currencies",
+    "id": "usd-jpy-regular",
+    "label": "USD/JPY",
+    "shortLabel": "USD/JPY",
+    "session": "Regular",
+    "payoutPercent": 74,
+    "payout": "74%",
+    "change": "+0.10%",
+    "up": true,
+    "countries": [
+      "us",
+      "jp"
+    ]
+  },
+  "usd-jpy": {
+    "symbol": "USD/JPY",
+    "base": 153.428,
+    "precision": 3,
+    "category": "Currencies",
+    "id": "usd-jpy",
+    "label": "USD/JPY (OTC)",
+    "shortLabel": "USD/JPY",
+    "session": "OTC",
+    "payoutPercent": 82,
+    "payout": "82%",
+    "change": "+0.10%",
+    "up": true,
+    "countries": [
+      "us",
+      "jp"
+    ]
+  },
+  "aud-usd-regular": {
+    "symbol": "AUD/USD",
+    "base": 0.65842,
+    "precision": 5,
+    "category": "Currencies",
+    "id": "aud-usd-regular",
+    "label": "AUD/USD",
+    "shortLabel": "AUD/USD",
+    "session": "Regular",
+    "payoutPercent": 75,
+    "payout": "75%",
+    "change": "+0.11%",
+    "up": true,
+    "countries": [
+      "au",
+      "us"
+    ]
+  },
+  "aud-usd": {
+    "symbol": "AUD/USD",
+    "base": 0.65842,
+    "precision": 5,
+    "category": "Currencies",
+    "id": "aud-usd",
+    "label": "AUD/USD (OTC)",
+    "shortLabel": "AUD/USD",
+    "session": "OTC",
+    "payoutPercent": 83,
+    "payout": "83%",
+    "change": "+0.11%",
+    "up": true,
+    "countries": [
+      "au",
+      "us"
+    ]
+  },
+  "usd-cad-regular": {
+    "symbol": "USD/CAD",
+    "base": 1.3842,
+    "precision": 5,
+    "category": "Currencies",
+    "id": "usd-cad-regular",
+    "label": "USD/CAD",
+    "shortLabel": "USD/CAD",
+    "session": "Regular",
+    "payoutPercent": 76,
+    "payout": "76%",
+    "change": "+0.12%",
+    "up": true,
+    "countries": [
+      "us",
+      "ca"
+    ]
+  },
+  "usd-cad": {
+    "symbol": "USD/CAD",
+    "base": 1.3842,
+    "precision": 5,
+    "category": "Currencies",
+    "id": "usd-cad",
+    "label": "USD/CAD (OTC)",
+    "shortLabel": "USD/CAD",
+    "session": "OTC",
+    "payoutPercent": 84,
+    "payout": "84%",
+    "change": "+0.12%",
+    "up": true,
+    "countries": [
+      "us",
+      "ca"
+    ]
+  },
+  "usd-chf-regular": {
+    "symbol": "USD/CHF",
+    "base": 0.89361,
+    "precision": 5,
+    "category": "Currencies",
+    "id": "usd-chf-regular",
+    "label": "USD/CHF",
+    "shortLabel": "USD/CHF",
+    "session": "Regular",
+    "payoutPercent": 77,
+    "payout": "77%",
+    "change": "-0.13%",
+    "up": false,
+    "countries": [
+      "us",
+      "ch"
+    ]
+  },
+  "usd-chf": {
+    "symbol": "USD/CHF",
+    "base": 0.89361,
+    "precision": 5,
+    "category": "Currencies",
+    "id": "usd-chf",
+    "label": "USD/CHF (OTC)",
+    "shortLabel": "USD/CHF",
+    "session": "OTC",
+    "payoutPercent": 85,
+    "payout": "85%",
+    "change": "-0.13%",
+    "up": false,
+    "countries": [
+      "us",
+      "ch"
+    ]
+  },
+  "nzd-usd-regular": {
+    "symbol": "NZD/USD",
+    "base": 0.61245,
+    "precision": 5,
+    "category": "Currencies",
+    "id": "nzd-usd-regular",
+    "label": "NZD/USD",
+    "shortLabel": "NZD/USD",
+    "session": "Regular",
+    "payoutPercent": 78,
+    "payout": "78%",
+    "change": "+0.14%",
+    "up": true,
+    "countries": [
+      "nz",
+      "us"
+    ]
+  },
+  "nzd-usd": {
+    "symbol": "NZD/USD",
+    "base": 0.61245,
+    "precision": 5,
+    "category": "Currencies",
+    "id": "nzd-usd",
+    "label": "NZD/USD (OTC)",
+    "shortLabel": "NZD/USD",
+    "session": "OTC",
+    "payoutPercent": 86,
+    "payout": "86%",
+    "change": "+0.14%",
+    "up": true,
+    "countries": [
+      "nz",
+      "us"
+    ]
+  },
+  "eur-gbp-regular": {
+    "symbol": "EUR/GBP",
+    "base": 0.8528,
+    "precision": 5,
+    "category": "Currencies",
+    "id": "eur-gbp-regular",
+    "label": "EUR/GBP",
+    "shortLabel": "EUR/GBP",
+    "session": "Regular",
+    "payoutPercent": 79,
+    "payout": "79%",
+    "change": "+0.15%",
+    "up": true,
+    "countries": [
+      "eu",
+      "gb"
+    ]
+  },
+  "eur-gbp": {
+    "symbol": "EUR/GBP",
+    "base": 0.8528,
+    "precision": 5,
+    "category": "Currencies",
+    "id": "eur-gbp",
+    "label": "EUR/GBP (OTC)",
+    "shortLabel": "EUR/GBP",
+    "session": "OTC",
+    "payoutPercent": 87,
+    "payout": "87%",
+    "change": "+0.15%",
+    "up": true,
+    "countries": [
+      "eu",
+      "gb"
+    ]
+  },
+  "eur-jpy-regular": {
+    "symbol": "EUR/JPY",
+    "base": 166.367,
+    "precision": 3,
+    "category": "Currencies",
+    "id": "eur-jpy-regular",
+    "label": "EUR/JPY",
+    "shortLabel": "EUR/JPY",
+    "session": "Regular",
+    "payoutPercent": 80,
+    "payout": "80%",
+    "change": "+0.16%",
+    "up": true,
+    "countries": [
+      "eu",
+      "jp"
+    ]
+  },
+  "eur-jpy": {
+    "symbol": "EUR/JPY",
+    "base": 166.367,
+    "precision": 3,
+    "category": "Currencies",
+    "id": "eur-jpy",
+    "label": "EUR/JPY (OTC)",
+    "shortLabel": "EUR/JPY",
+    "session": "OTC",
+    "payoutPercent": 88,
+    "payout": "88%",
+    "change": "+0.16%",
+    "up": true,
+    "countries": [
+      "eu",
+      "jp"
+    ]
+  },
+  "eur-aud-regular": {
+    "symbol": "EUR/AUD",
+    "base": 1.6468,
+    "precision": 5,
+    "category": "Currencies",
+    "id": "eur-aud-regular",
+    "label": "EUR/AUD",
+    "shortLabel": "EUR/AUD",
+    "session": "Regular",
+    "payoutPercent": 81,
+    "payout": "81%",
+    "change": "+0.17%",
+    "up": true,
+    "countries": [
+      "eu",
+      "au"
+    ]
+  },
+  "eur-aud": {
+    "symbol": "EUR/AUD",
+    "base": 1.6468,
+    "precision": 5,
+    "category": "Currencies",
+    "id": "eur-aud",
+    "label": "EUR/AUD (OTC)",
+    "shortLabel": "EUR/AUD",
+    "session": "OTC",
+    "payoutPercent": 89,
+    "payout": "89%",
+    "change": "+0.17%",
+    "up": true,
+    "countries": [
+      "eu",
+      "au"
+    ]
+  },
+  "eur-cad-regular": {
+    "symbol": "EUR/CAD",
+    "base": 1.501,
+    "precision": 5,
+    "category": "Currencies",
+    "id": "eur-cad-regular",
+    "label": "EUR/CAD",
+    "shortLabel": "EUR/CAD",
+    "session": "Regular",
+    "payoutPercent": 82,
+    "payout": "82%",
+    "change": "-0.18%",
+    "up": false,
+    "countries": [
+      "eu",
+      "ca"
+    ]
+  },
+  "eur-cad": {
+    "symbol": "EUR/CAD",
+    "base": 1.501,
+    "precision": 5,
+    "category": "Currencies",
+    "id": "eur-cad",
+    "label": "EUR/CAD (OTC)",
+    "shortLabel": "EUR/CAD",
+    "session": "OTC",
+    "payoutPercent": 90,
+    "payout": "90%",
+    "change": "-0.18%",
+    "up": false,
+    "countries": [
+      "eu",
+      "ca"
+    ]
+  },
+  "eur-chf-regular": {
+    "symbol": "EUR/CHF",
+    "base": 0.96892,
+    "precision": 5,
+    "category": "Currencies",
+    "id": "eur-chf-regular",
+    "label": "EUR/CHF",
+    "shortLabel": "EUR/CHF",
+    "session": "Regular",
+    "payoutPercent": 83,
+    "payout": "83%",
+    "change": "+0.19%",
+    "up": true,
+    "countries": [
+      "eu",
+      "ch"
+    ]
+  },
+  "eur-chf": {
+    "symbol": "EUR/CHF",
+    "base": 0.96892,
+    "precision": 5,
+    "category": "Currencies",
+    "id": "eur-chf",
+    "label": "EUR/CHF (OTC)",
+    "shortLabel": "EUR/CHF",
+    "session": "OTC",
+    "payoutPercent": 91,
+    "payout": "91%",
+    "change": "+0.19%",
+    "up": true,
+    "countries": [
+      "eu",
+      "ch"
+    ]
+  },
+  "eur-nzd-regular": {
+    "symbol": "EUR/NZD",
+    "base": 1.7701,
+    "precision": 5,
+    "category": "Currencies",
+    "id": "eur-nzd-regular",
+    "label": "EUR/NZD",
+    "shortLabel": "EUR/NZD",
+    "session": "Regular",
+    "payoutPercent": 84,
+    "payout": "84%",
+    "change": "+0.20%",
+    "up": true,
+    "countries": [
+      "eu",
+      "nz"
+    ]
+  },
+  "eur-nzd": {
+    "symbol": "EUR/NZD",
+    "base": 1.7701,
+    "precision": 5,
+    "category": "Currencies",
+    "id": "eur-nzd",
+    "label": "EUR/NZD (OTC)",
+    "shortLabel": "EUR/NZD",
+    "session": "OTC",
+    "payoutPercent": 92,
+    "payout": "92%",
+    "change": "+0.20%",
+    "up": true,
+    "countries": [
+      "eu",
+      "nz"
+    ]
+  },
+  "gbp-jpy-regular": {
+    "symbol": "GBP/JPY",
+    "base": 195.077,
+    "precision": 3,
+    "category": "Currencies",
+    "id": "gbp-jpy-regular",
+    "label": "GBP/JPY",
+    "shortLabel": "GBP/JPY",
+    "session": "Regular",
+    "payoutPercent": 85,
+    "payout": "85%",
+    "change": "+0.21%",
+    "up": true,
+    "countries": [
+      "gb",
+      "jp"
+    ]
+  },
+  "gbp-jpy": {
+    "symbol": "GBP/JPY",
+    "base": 195.077,
+    "precision": 3,
+    "category": "Currencies",
+    "id": "gbp-jpy",
+    "label": "GBP/JPY (OTC)",
+    "shortLabel": "GBP/JPY",
+    "session": "OTC",
+    "payoutPercent": 93,
+    "payout": "93%",
+    "change": "+0.21%",
+    "up": true,
+    "countries": [
+      "gb",
+      "jp"
+    ]
+  },
+  "gbp-aud-regular": {
+    "symbol": "GBP/AUD",
+    "base": 1.9314,
+    "precision": 5,
+    "category": "Currencies",
+    "id": "gbp-aud-regular",
+    "label": "GBP/AUD",
+    "shortLabel": "GBP/AUD",
+    "session": "Regular",
+    "payoutPercent": 86,
+    "payout": "86%",
+    "change": "+0.22%",
+    "up": true,
+    "countries": [
+      "gb",
+      "au"
+    ]
+  },
+  "gbp-aud": {
+    "symbol": "GBP/AUD",
+    "base": 1.9314,
+    "precision": 5,
+    "category": "Currencies",
+    "id": "gbp-aud",
+    "label": "GBP/AUD (OTC)",
+    "shortLabel": "GBP/AUD",
+    "session": "OTC",
+    "payoutPercent": 80,
+    "payout": "80%",
+    "change": "+0.22%",
+    "up": true,
+    "countries": [
+      "gb",
+      "au"
+    ]
+  },
+  "gbp-cad-regular": {
+    "symbol": "GBP/CAD",
+    "base": 1.7596,
+    "precision": 5,
+    "category": "Currencies",
+    "id": "gbp-cad-regular",
+    "label": "GBP/CAD",
+    "shortLabel": "GBP/CAD",
+    "session": "Regular",
+    "payoutPercent": 87,
+    "payout": "87%",
+    "change": "-0.23%",
+    "up": false,
+    "countries": [
+      "gb",
+      "ca"
+    ]
+  },
+  "gbp-cad": {
+    "symbol": "GBP/CAD",
+    "base": 1.7596,
+    "precision": 5,
+    "category": "Currencies",
+    "id": "gbp-cad",
+    "label": "GBP/CAD (OTC)",
+    "shortLabel": "GBP/CAD",
+    "session": "OTC",
+    "payoutPercent": 81,
+    "payout": "81%",
+    "change": "-0.23%",
+    "up": false,
+    "countries": [
+      "gb",
+      "ca"
+    ]
+  },
+  "gbp-chf-regular": {
+    "symbol": "GBP/CHF",
+    "base": 1.1361,
+    "precision": 5,
+    "category": "Currencies",
+    "id": "gbp-chf-regular",
+    "label": "GBP/CHF",
+    "shortLabel": "GBP/CHF",
+    "session": "Regular",
+    "payoutPercent": 88,
+    "payout": "88%",
+    "change": "+0.24%",
+    "up": true,
+    "countries": [
+      "gb",
+      "ch"
+    ]
+  },
+  "gbp-chf": {
+    "symbol": "GBP/CHF",
+    "base": 1.1361,
+    "precision": 5,
+    "category": "Currencies",
+    "id": "gbp-chf",
+    "label": "GBP/CHF (OTC)",
+    "shortLabel": "GBP/CHF",
+    "session": "OTC",
+    "payoutPercent": 82,
+    "payout": "82%",
+    "change": "+0.24%",
+    "up": true,
+    "countries": [
+      "gb",
+      "ch"
+    ]
+  },
+  "gbp-nzd-regular": {
+    "symbol": "GBP/NZD",
+    "base": 2.076,
+    "precision": 5,
+    "category": "Currencies",
+    "id": "gbp-nzd-regular",
+    "label": "GBP/NZD",
+    "shortLabel": "GBP/NZD",
+    "session": "Regular",
+    "payoutPercent": 89,
+    "payout": "89%",
+    "change": "+0.25%",
+    "up": true,
+    "countries": [
+      "gb",
+      "nz"
+    ]
+  },
+  "gbp-nzd": {
+    "symbol": "GBP/NZD",
+    "base": 2.076,
+    "precision": 5,
+    "category": "Currencies",
+    "id": "gbp-nzd",
+    "label": "GBP/NZD (OTC)",
+    "shortLabel": "GBP/NZD",
+    "session": "OTC",
+    "payoutPercent": 83,
+    "payout": "83%",
+    "change": "+0.25%",
+    "up": true,
+    "countries": [
+      "gb",
+      "nz"
+    ]
+  },
+  "aud-jpy-regular": {
+    "symbol": "AUD/JPY",
+    "base": 101.019,
+    "precision": 3,
+    "category": "Currencies",
+    "id": "aud-jpy-regular",
+    "label": "AUD/JPY",
+    "shortLabel": "AUD/JPY",
+    "session": "Regular",
+    "payoutPercent": 90,
+    "payout": "90%",
+    "change": "+0.26%",
+    "up": true,
+    "countries": [
+      "au",
+      "jp"
+    ]
+  },
+  "aud-jpy": {
+    "symbol": "AUD/JPY",
+    "base": 101.019,
+    "precision": 3,
+    "category": "Currencies",
+    "id": "aud-jpy",
+    "label": "AUD/JPY (OTC)",
+    "shortLabel": "AUD/JPY",
+    "session": "OTC",
+    "payoutPercent": 84,
+    "payout": "84%",
+    "change": "+0.26%",
+    "up": true,
+    "countries": [
+      "au",
+      "jp"
+    ]
+  },
+  "aud-cad-regular": {
+    "symbol": "AUD/CAD",
+    "base": 0.90824,
+    "precision": 5,
+    "category": "Currencies",
+    "id": "aud-cad-regular",
+    "label": "AUD/CAD",
+    "shortLabel": "AUD/CAD",
+    "session": "Regular",
+    "payoutPercent": 72,
+    "payout": "72%",
+    "change": "+0.27%",
+    "up": true,
+    "countries": [
+      "au",
+      "ca"
+    ]
+  },
+  "aud-cad": {
+    "symbol": "AUD/CAD",
+    "base": 0.90824,
+    "precision": 5,
+    "category": "Currencies",
+    "id": "aud-cad",
+    "label": "AUD/CAD (OTC)",
+    "shortLabel": "AUD/CAD",
+    "session": "OTC",
+    "payoutPercent": 85,
+    "payout": "85%",
+    "change": "+0.27%",
+    "up": true,
+    "countries": [
+      "au",
+      "ca"
+    ]
+  },
+  "aud-chf-regular": {
+    "symbol": "AUD/CHF",
+    "base": 0.55842,
+    "precision": 5,
+    "category": "Currencies",
+    "id": "aud-chf-regular",
+    "label": "AUD/CHF",
+    "shortLabel": "AUD/CHF",
+    "session": "Regular",
+    "payoutPercent": 73,
+    "payout": "73%",
+    "change": "-0.28%",
+    "up": false,
+    "countries": [
+      "au",
+      "ch"
+    ]
+  },
+  "aud-chf": {
+    "symbol": "AUD/CHF",
+    "base": 0.55842,
+    "precision": 5,
+    "category": "Currencies",
+    "id": "aud-chf",
+    "label": "AUD/CHF (OTC)",
+    "shortLabel": "AUD/CHF",
+    "session": "OTC",
+    "payoutPercent": 86,
+    "payout": "86%",
+    "change": "-0.28%",
+    "up": false,
+    "countries": [
+      "au",
+      "ch"
+    ]
+  },
+  "aud-nzd-regular": {
+    "symbol": "AUD/NZD",
+    "base": 1.10284,
+    "precision": 5,
+    "category": "Currencies",
+    "id": "aud-nzd-regular",
+    "label": "AUD/NZD",
+    "shortLabel": "AUD/NZD",
+    "session": "Regular",
+    "payoutPercent": 74,
+    "payout": "74%",
+    "change": "+0.29%",
+    "up": true,
+    "countries": [
+      "au",
+      "nz"
+    ]
+  },
+  "aud-nzd": {
+    "symbol": "AUD/NZD",
+    "base": 1.10284,
+    "precision": 5,
+    "category": "Currencies",
+    "id": "aud-nzd",
+    "label": "AUD/NZD (OTC)",
+    "shortLabel": "AUD/NZD",
+    "session": "OTC",
+    "payoutPercent": 87,
+    "payout": "87%",
+    "change": "+0.29%",
+    "up": true,
+    "countries": [
+      "au",
+      "nz"
+    ]
+  },
+  "cad-jpy-regular": {
+    "symbol": "CAD/JPY",
+    "base": 110.843,
+    "precision": 3,
+    "category": "Currencies",
+    "id": "cad-jpy-regular",
+    "label": "CAD/JPY",
+    "shortLabel": "CAD/JPY",
+    "session": "Regular",
+    "payoutPercent": 75,
+    "payout": "75%",
+    "change": "+0.30%",
+    "up": true,
+    "countries": [
+      "ca",
+      "jp"
+    ]
+  },
+  "cad-jpy": {
+    "symbol": "CAD/JPY",
+    "base": 110.843,
+    "precision": 3,
+    "category": "Currencies",
+    "id": "cad-jpy",
+    "label": "CAD/JPY (OTC)",
+    "shortLabel": "CAD/JPY",
+    "session": "OTC",
+    "payoutPercent": 88,
+    "payout": "88%",
+    "change": "+0.30%",
+    "up": true,
+    "countries": [
+      "ca",
+      "jp"
+    ]
+  },
+  "cad-chf-regular": {
+    "symbol": "CAD/CHF",
+    "base": 0.60428,
+    "precision": 5,
+    "category": "Currencies",
+    "id": "cad-chf-regular",
+    "label": "CAD/CHF",
+    "shortLabel": "CAD/CHF",
+    "session": "Regular",
+    "payoutPercent": 76,
+    "payout": "76%",
+    "change": "+0.31%",
+    "up": true,
+    "countries": [
+      "ca",
+      "ch"
+    ]
+  },
+  "cad-chf": {
+    "symbol": "CAD/CHF",
+    "base": 0.60428,
+    "precision": 5,
+    "category": "Currencies",
+    "id": "cad-chf",
+    "label": "CAD/CHF (OTC)",
+    "shortLabel": "CAD/CHF",
+    "session": "OTC",
+    "payoutPercent": 89,
+    "payout": "89%",
+    "change": "+0.31%",
+    "up": true,
+    "countries": [
+      "ca",
+      "ch"
+    ]
+  },
+  "chf-jpy-regular": {
+    "symbol": "CHF/JPY",
+    "base": 171.693,
+    "precision": 3,
+    "category": "Currencies",
+    "id": "chf-jpy-regular",
+    "label": "CHF/JPY",
+    "shortLabel": "CHF/JPY",
+    "session": "Regular",
+    "payoutPercent": 77,
+    "payout": "77%",
+    "change": "+0.32%",
+    "up": true,
+    "countries": [
+      "ch",
+      "jp"
+    ]
+  },
+  "chf-jpy": {
+    "symbol": "CHF/JPY",
+    "base": 171.693,
+    "precision": 3,
+    "category": "Currencies",
+    "id": "chf-jpy",
+    "label": "CHF/JPY (OTC)",
+    "shortLabel": "CHF/JPY",
+    "session": "OTC",
+    "payoutPercent": 90,
+    "payout": "90%",
+    "change": "+0.32%",
+    "up": true,
+    "countries": [
+      "ch",
+      "jp"
+    ]
+  },
+  "nzd-jpy-regular": {
+    "symbol": "NZD/JPY",
+    "base": 93.966,
+    "precision": 3,
+    "category": "Currencies",
+    "id": "nzd-jpy-regular",
+    "label": "NZD/JPY",
+    "shortLabel": "NZD/JPY",
+    "session": "Regular",
+    "payoutPercent": 78,
+    "payout": "78%",
+    "change": "-0.33%",
+    "up": false,
+    "countries": [
+      "nz",
+      "jp"
+    ]
+  },
+  "nzd-jpy": {
+    "symbol": "NZD/JPY",
+    "base": 93.966,
+    "precision": 3,
+    "category": "Currencies",
+    "id": "nzd-jpy",
+    "label": "NZD/JPY (OTC)",
+    "shortLabel": "NZD/JPY",
+    "session": "OTC",
+    "payoutPercent": 91,
+    "payout": "91%",
+    "change": "-0.33%",
+    "up": false,
+    "countries": [
+      "nz",
+      "jp"
+    ]
+  },
+  "nzd-cad-regular": {
+    "symbol": "NZD/CAD",
+    "base": 0.8477,
+    "precision": 5,
+    "category": "Currencies",
+    "id": "nzd-cad-regular",
+    "label": "NZD/CAD",
+    "shortLabel": "NZD/CAD",
+    "session": "Regular",
+    "payoutPercent": 79,
+    "payout": "79%",
+    "change": "+0.34%",
+    "up": true,
+    "countries": [
+      "nz",
+      "ca"
+    ]
+  },
+  "nzd-cad": {
+    "symbol": "NZD/CAD",
+    "base": 0.8477,
+    "precision": 5,
+    "category": "Currencies",
+    "id": "nzd-cad",
+    "label": "NZD/CAD (OTC)",
+    "shortLabel": "NZD/CAD",
+    "session": "OTC",
+    "payoutPercent": 92,
+    "payout": "92%",
+    "change": "+0.34%",
+    "up": true,
+    "countries": [
+      "nz",
+      "ca"
+    ]
+  },
+  "nzd-chf-regular": {
+    "symbol": "NZD/CHF",
+    "base": 0.5473,
+    "precision": 5,
+    "category": "Currencies",
+    "id": "nzd-chf-regular",
+    "label": "NZD/CHF",
+    "shortLabel": "NZD/CHF",
+    "session": "Regular",
+    "payoutPercent": 80,
+    "payout": "80%",
+    "change": "+0.35%",
+    "up": true,
+    "countries": [
+      "nz",
+      "ch"
+    ]
+  },
+  "nzd-chf": {
+    "symbol": "NZD/CHF",
+    "base": 0.5473,
+    "precision": 5,
+    "category": "Currencies",
+    "id": "nzd-chf",
+    "label": "NZD/CHF (OTC)",
+    "shortLabel": "NZD/CHF",
+    "session": "OTC",
+    "payoutPercent": 93,
+    "payout": "93%",
+    "change": "+0.35%",
+    "up": true,
+    "countries": [
+      "nz",
+      "ch"
+    ]
+  },
+  "usd-rub-regular": {
+    "symbol": "USD/RUB",
+    "base": 91.842,
+    "precision": 3,
+    "category": "Currencies",
+    "id": "usd-rub-regular",
+    "label": "USD/RUB",
+    "shortLabel": "USD/RUB",
+    "session": "Regular",
+    "payoutPercent": 81,
+    "payout": "81%",
+    "change": "+0.36%",
+    "up": true,
+    "countries": [
+      "us",
+      "ru"
+    ]
+  },
+  "usd-rub": {
+    "symbol": "USD/RUB",
+    "base": 91.842,
+    "precision": 3,
+    "category": "Currencies",
+    "id": "usd-rub",
+    "label": "USD/RUB (OTC)",
+    "shortLabel": "USD/RUB",
+    "session": "OTC",
+    "payoutPercent": 80,
+    "payout": "80%",
+    "change": "+0.36%",
+    "up": true,
+    "countries": [
+      "us",
+      "ru"
+    ]
+  },
+  "usd-brl-regular": {
+    "symbol": "USD/BRL",
+    "base": 5.7428,
+    "precision": 4,
+    "category": "Currencies",
+    "id": "usd-brl-regular",
+    "label": "USD/BRL",
+    "shortLabel": "USD/BRL",
+    "session": "Regular",
+    "payoutPercent": 82,
+    "payout": "82%",
+    "change": "+0.08%",
+    "up": true,
+    "countries": [
+      "us",
+      "br"
+    ]
+  },
+  "usd-brl": {
+    "symbol": "USD/BRL",
+    "base": 5.7428,
+    "precision": 4,
+    "category": "Currencies",
+    "id": "usd-brl",
+    "label": "USD/BRL (OTC)",
+    "shortLabel": "USD/BRL",
+    "session": "OTC",
+    "payoutPercent": 81,
+    "payout": "81%",
+    "change": "+0.08%",
+    "up": true,
+    "countries": [
+      "us",
+      "br"
+    ]
+  },
+  "usd-inr-regular": {
+    "symbol": "USD/INR",
+    "base": 86.742,
+    "precision": 3,
+    "category": "Currencies",
+    "id": "usd-inr-regular",
+    "label": "USD/INR",
+    "shortLabel": "USD/INR",
+    "session": "Regular",
+    "payoutPercent": 83,
+    "payout": "83%",
+    "change": "-0.09%",
+    "up": false,
+    "countries": [
+      "us",
+      "in"
+    ]
+  },
+  "usd-inr": {
+    "symbol": "USD/INR",
+    "base": 86.742,
+    "precision": 3,
+    "category": "Currencies",
+    "id": "usd-inr",
+    "label": "USD/INR (OTC)",
+    "shortLabel": "USD/INR",
+    "session": "OTC",
+    "payoutPercent": 82,
+    "payout": "82%",
+    "change": "-0.09%",
+    "up": false,
+    "countries": [
+      "us",
+      "in"
+    ]
+  },
+  "usd-clp-regular": {
+    "symbol": "USD/CLP",
+    "base": 954.22,
+    "precision": 3,
+    "category": "Currencies",
+    "id": "usd-clp-regular",
+    "label": "USD/CLP",
+    "shortLabel": "USD/CLP",
+    "session": "Regular",
+    "payoutPercent": 84,
+    "payout": "84%",
+    "change": "+0.10%",
+    "up": true,
+    "countries": [
+      "us",
+      "cl"
+    ]
+  },
+  "usd-clp": {
+    "symbol": "USD/CLP",
+    "base": 954.22,
+    "precision": 3,
+    "category": "Currencies",
+    "id": "usd-clp",
+    "label": "USD/CLP (OTC)",
+    "shortLabel": "USD/CLP",
+    "session": "OTC",
+    "payoutPercent": 83,
+    "payout": "83%",
+    "change": "+0.10%",
+    "up": true,
+    "countries": [
+      "us",
+      "cl"
+    ]
+  },
+  "usd-ars-regular": {
+    "symbol": "USD/ARS",
+    "base": 1046.25,
+    "precision": 2,
+    "category": "Currencies",
+    "id": "usd-ars-regular",
+    "label": "USD/ARS",
+    "shortLabel": "USD/ARS",
+    "session": "Regular",
+    "payoutPercent": 85,
+    "payout": "85%",
+    "change": "+0.11%",
+    "up": true,
+    "countries": [
+      "us",
+      "ar"
+    ]
+  },
+  "usd-ars": {
+    "symbol": "USD/ARS",
+    "base": 1046.25,
+    "precision": 2,
+    "category": "Currencies",
+    "id": "usd-ars",
+    "label": "USD/ARS (OTC)",
+    "shortLabel": "USD/ARS",
+    "session": "OTC",
+    "payoutPercent": 84,
+    "payout": "84%",
+    "change": "+0.11%",
+    "up": true,
+    "countries": [
+      "us",
+      "ar"
+    ]
+  },
+  "usd-bdt-regular": {
+    "symbol": "USD/BDT",
+    "base": 121.68,
+    "precision": 3,
+    "category": "Currencies",
+    "id": "usd-bdt-regular",
+    "label": "USD/BDT",
+    "shortLabel": "USD/BDT",
+    "session": "Regular",
+    "payoutPercent": 86,
+    "payout": "86%",
+    "change": "+0.12%",
+    "up": true,
+    "countries": [
+      "us",
+      "bd"
+    ]
+  },
+  "usd-bdt": {
+    "symbol": "USD/BDT",
+    "base": 121.68,
+    "precision": 3,
+    "category": "Currencies",
+    "id": "usd-bdt",
+    "label": "USD/BDT (OTC)",
+    "shortLabel": "USD/BDT",
+    "session": "OTC",
+    "payoutPercent": 85,
+    "payout": "85%",
+    "change": "+0.12%",
+    "up": true,
+    "countries": [
+      "us",
+      "bd"
+    ]
+  },
+  "usd-cny-regular": {
+    "symbol": "USD/CNY",
+    "base": 7.2458,
+    "precision": 4,
+    "category": "Currencies",
+    "id": "usd-cny-regular",
+    "label": "USD/CNY",
+    "shortLabel": "USD/CNY",
+    "session": "Regular",
+    "payoutPercent": 87,
+    "payout": "87%",
+    "change": "+0.13%",
+    "up": true,
+    "countries": [
+      "us",
+      "cn"
+    ]
+  },
+  "usd-cny": {
+    "symbol": "USD/CNY",
+    "base": 7.2458,
+    "precision": 4,
+    "category": "Currencies",
+    "id": "usd-cny",
+    "label": "USD/CNY (OTC)",
+    "shortLabel": "USD/CNY",
+    "session": "OTC",
+    "payoutPercent": 86,
+    "payout": "86%",
+    "change": "+0.13%",
+    "up": true,
+    "countries": [
+      "us",
+      "cn"
+    ]
+  },
+  "usd-dzd-regular": {
+    "symbol": "USD/DZD",
+    "base": 134.24,
+    "precision": 3,
+    "category": "Currencies",
+    "id": "usd-dzd-regular",
+    "label": "USD/DZD",
+    "shortLabel": "USD/DZD",
+    "session": "Regular",
+    "payoutPercent": 88,
+    "payout": "88%",
+    "change": "-0.14%",
+    "up": false,
+    "countries": [
+      "us",
+      "dz"
+    ]
+  },
+  "usd-dzd": {
+    "symbol": "USD/DZD",
+    "base": 134.24,
+    "precision": 3,
+    "category": "Currencies",
+    "id": "usd-dzd",
+    "label": "USD/DZD (OTC)",
+    "shortLabel": "USD/DZD",
+    "session": "OTC",
+    "payoutPercent": 87,
+    "payout": "87%",
+    "change": "-0.14%",
+    "up": false,
+    "countries": [
+      "us",
+      "dz"
+    ]
+  },
+  "usd-egp-regular": {
+    "symbol": "USD/EGP",
+    "base": 50.73,
+    "precision": 3,
+    "category": "Currencies",
+    "id": "usd-egp-regular",
+    "label": "USD/EGP",
+    "shortLabel": "USD/EGP",
+    "session": "Regular",
+    "payoutPercent": 89,
+    "payout": "89%",
+    "change": "+0.15%",
+    "up": true,
+    "countries": [
+      "us",
+      "eg"
+    ]
+  },
+  "usd-egp": {
+    "symbol": "USD/EGP",
+    "base": 50.73,
+    "precision": 3,
+    "category": "Currencies",
+    "id": "usd-egp",
+    "label": "USD/EGP (OTC)",
+    "shortLabel": "USD/EGP",
+    "session": "OTC",
+    "payoutPercent": 88,
+    "payout": "88%",
+    "change": "+0.15%",
+    "up": true,
+    "countries": [
+      "us",
+      "eg"
+    ]
+  },
+  "usd-idr-regular": {
+    "symbol": "USD/IDR",
+    "base": 16318,
+    "precision": 2,
+    "category": "Currencies",
+    "id": "usd-idr-regular",
+    "label": "USD/IDR",
+    "shortLabel": "USD/IDR",
+    "session": "Regular",
+    "payoutPercent": 90,
+    "payout": "90%",
+    "change": "+0.16%",
+    "up": true,
+    "countries": [
+      "us",
+      "id"
+    ]
+  },
+  "usd-idr": {
+    "symbol": "USD/IDR",
+    "base": 16318,
+    "precision": 2,
+    "category": "Currencies",
+    "id": "usd-idr",
+    "label": "USD/IDR (OTC)",
+    "shortLabel": "USD/IDR",
+    "session": "OTC",
+    "payoutPercent": 89,
+    "payout": "89%",
+    "change": "+0.16%",
+    "up": true,
+    "countries": [
+      "us",
+      "id"
+    ]
+  },
+  "usd-mxn-regular": {
+    "symbol": "USD/MXN",
+    "base": 20.318,
+    "precision": 4,
+    "category": "Currencies",
+    "id": "usd-mxn-regular",
+    "label": "USD/MXN",
+    "shortLabel": "USD/MXN",
+    "session": "Regular",
+    "payoutPercent": 72,
+    "payout": "72%",
+    "change": "+0.17%",
+    "up": true,
+    "countries": [
+      "us",
+      "mx"
+    ]
+  },
+  "usd-mxn": {
+    "symbol": "USD/MXN",
+    "base": 20.318,
+    "precision": 4,
+    "category": "Currencies",
+    "id": "usd-mxn",
+    "label": "USD/MXN (OTC)",
+    "shortLabel": "USD/MXN",
+    "session": "OTC",
+    "payoutPercent": 90,
+    "payout": "90%",
+    "change": "+0.17%",
+    "up": true,
+    "countries": [
+      "us",
+      "mx"
+    ]
+  },
+  "usd-ngn-regular": {
+    "symbol": "USD/NGN",
+    "base": 1526.2,
+    "precision": 2,
+    "category": "Currencies",
+    "id": "usd-ngn-regular",
+    "label": "USD/NGN",
+    "shortLabel": "USD/NGN",
+    "session": "Regular",
+    "payoutPercent": 73,
+    "payout": "73%",
+    "change": "+0.18%",
+    "up": true,
+    "countries": [
+      "us",
+      "ng"
+    ]
+  },
+  "usd-ngn": {
+    "symbol": "USD/NGN",
+    "base": 1526.2,
+    "precision": 2,
+    "category": "Currencies",
+    "id": "usd-ngn",
+    "label": "USD/NGN (OTC)",
+    "shortLabel": "USD/NGN",
+    "session": "OTC",
+    "payoutPercent": 91,
+    "payout": "91%",
+    "change": "+0.18%",
+    "up": true,
+    "countries": [
+      "us",
+      "ng"
+    ]
+  },
+  "usd-pkr-regular": {
+    "symbol": "USD/PKR",
+    "base": 279.5,
+    "precision": 3,
+    "category": "Currencies",
+    "id": "usd-pkr-regular",
+    "label": "USD/PKR",
+    "shortLabel": "USD/PKR",
+    "session": "Regular",
+    "payoutPercent": 74,
+    "payout": "74%",
+    "change": "-0.19%",
+    "up": false,
+    "countries": [
+      "us",
+      "pk"
+    ]
+  },
+  "usd-pkr": {
+    "symbol": "USD/PKR",
+    "base": 279.5,
+    "precision": 3,
+    "category": "Currencies",
+    "id": "usd-pkr",
+    "label": "USD/PKR (OTC)",
+    "shortLabel": "USD/PKR",
+    "session": "OTC",
+    "payoutPercent": 92,
+    "payout": "92%",
+    "change": "-0.19%",
+    "up": false,
+    "countries": [
+      "us",
+      "pk"
+    ]
+  },
+  "usd-php-regular": {
+    "symbol": "USD/PHP",
+    "base": 58.142,
+    "precision": 3,
+    "category": "Currencies",
+    "id": "usd-php-regular",
+    "label": "USD/PHP",
+    "shortLabel": "USD/PHP",
+    "session": "Regular",
+    "payoutPercent": 75,
+    "payout": "75%",
+    "change": "+0.20%",
+    "up": true,
+    "countries": [
+      "us",
+      "ph"
+    ]
+  },
+  "usd-php": {
+    "symbol": "USD/PHP",
+    "base": 58.142,
+    "precision": 3,
+    "category": "Currencies",
+    "id": "usd-php",
+    "label": "USD/PHP (OTC)",
+    "shortLabel": "USD/PHP",
+    "session": "OTC",
+    "payoutPercent": 93,
+    "payout": "93%",
+    "change": "+0.20%",
+    "up": true,
+    "countries": [
+      "us",
+      "ph"
+    ]
+  },
+  "usd-sgd-regular": {
+    "symbol": "USD/SGD",
+    "base": 1.3428,
+    "precision": 5,
+    "category": "Currencies",
+    "id": "usd-sgd-regular",
+    "label": "USD/SGD",
+    "shortLabel": "USD/SGD",
+    "session": "Regular",
+    "payoutPercent": 76,
+    "payout": "76%",
+    "change": "+0.21%",
+    "up": true,
+    "countries": [
+      "us",
+      "sg"
+    ]
+  },
+  "usd-sgd": {
+    "symbol": "USD/SGD",
+    "base": 1.3428,
+    "precision": 5,
+    "category": "Currencies",
+    "id": "usd-sgd",
+    "label": "USD/SGD (OTC)",
+    "shortLabel": "USD/SGD",
+    "session": "OTC",
+    "payoutPercent": 80,
+    "payout": "80%",
+    "change": "+0.21%",
+    "up": true,
+    "countries": [
+      "us",
+      "sg"
+    ]
+  },
+  "usd-thb-regular": {
+    "symbol": "USD/THB",
+    "base": 34.64,
+    "precision": 3,
+    "category": "Currencies",
+    "id": "usd-thb-regular",
+    "label": "USD/THB",
+    "shortLabel": "USD/THB",
+    "session": "Regular",
+    "payoutPercent": 77,
+    "payout": "77%",
+    "change": "+0.22%",
+    "up": true,
+    "countries": [
+      "us",
+      "th"
+    ]
+  },
+  "usd-thb": {
+    "symbol": "USD/THB",
+    "base": 34.64,
+    "precision": 3,
+    "category": "Currencies",
+    "id": "usd-thb",
+    "label": "USD/THB (OTC)",
+    "shortLabel": "USD/THB",
+    "session": "OTC",
+    "payoutPercent": 81,
+    "payout": "81%",
+    "change": "+0.22%",
+    "up": true,
+    "countries": [
+      "us",
+      "th"
+    ]
+  },
+  "usd-try-regular": {
+    "symbol": "USD/TRY",
+    "base": 36.424,
+    "precision": 4,
+    "category": "Currencies",
+    "id": "usd-try-regular",
+    "label": "USD/TRY",
+    "shortLabel": "USD/TRY",
+    "session": "Regular",
+    "payoutPercent": 78,
+    "payout": "78%",
+    "change": "+0.23%",
+    "up": true,
+    "countries": [
+      "us",
+      "tr"
+    ]
+  },
+  "usd-try": {
+    "symbol": "USD/TRY",
+    "base": 36.424,
+    "precision": 4,
+    "category": "Currencies",
+    "id": "usd-try",
+    "label": "USD/TRY (OTC)",
+    "shortLabel": "USD/TRY",
+    "session": "OTC",
+    "payoutPercent": 82,
+    "payout": "82%",
+    "change": "+0.23%",
+    "up": true,
+    "countries": [
+      "us",
+      "tr"
+    ]
+  },
+  "usd-zar-regular": {
+    "symbol": "USD/ZAR",
+    "base": 18.468,
+    "precision": 4,
+    "category": "Currencies",
+    "id": "usd-zar-regular",
+    "label": "USD/ZAR",
+    "shortLabel": "USD/ZAR",
+    "session": "Regular",
+    "payoutPercent": 79,
+    "payout": "79%",
+    "change": "-0.24%",
+    "up": false,
+    "countries": [
+      "us",
+      "za"
+    ]
+  },
+  "usd-zar": {
+    "symbol": "USD/ZAR",
+    "base": 18.468,
+    "precision": 4,
+    "category": "Currencies",
+    "id": "usd-zar",
+    "label": "USD/ZAR (OTC)",
+    "shortLabel": "USD/ZAR",
+    "session": "OTC",
+    "payoutPercent": 83,
+    "payout": "83%",
+    "change": "-0.24%",
+    "up": false,
+    "countries": [
+      "us",
+      "za"
+    ]
+  },
+  "usd-aed-regular": {
+    "symbol": "USD/AED",
+    "base": 3.6725,
+    "precision": 4,
+    "category": "Currencies",
+    "id": "usd-aed-regular",
+    "label": "USD/AED",
+    "shortLabel": "USD/AED",
+    "session": "Regular",
+    "payoutPercent": 80,
+    "payout": "80%",
+    "change": "+0.25%",
+    "up": true,
+    "countries": [
+      "us",
+      "ae"
+    ]
+  },
+  "usd-aed": {
+    "symbol": "USD/AED",
+    "base": 3.6725,
+    "precision": 4,
+    "category": "Currencies",
+    "id": "usd-aed",
+    "label": "USD/AED (OTC)",
+    "shortLabel": "USD/AED",
+    "session": "OTC",
+    "payoutPercent": 84,
+    "payout": "84%",
+    "change": "+0.25%",
+    "up": true,
+    "countries": [
+      "us",
+      "ae"
+    ]
+  },
+  "usd-sar-regular": {
+    "symbol": "USD/SAR",
+    "base": 3.7502,
+    "precision": 4,
+    "category": "Currencies",
+    "id": "usd-sar-regular",
+    "label": "USD/SAR",
+    "shortLabel": "USD/SAR",
+    "session": "Regular",
+    "payoutPercent": 81,
+    "payout": "81%",
+    "change": "+0.26%",
+    "up": true,
+    "countries": [
+      "us",
+      "sa"
+    ]
+  },
+  "usd-sar": {
+    "symbol": "USD/SAR",
+    "base": 3.7502,
+    "precision": 4,
+    "category": "Currencies",
+    "id": "usd-sar",
+    "label": "USD/SAR (OTC)",
+    "shortLabel": "USD/SAR",
+    "session": "OTC",
+    "payoutPercent": 85,
+    "payout": "85%",
+    "change": "+0.26%",
+    "up": true,
+    "countries": [
+      "us",
+      "sa"
+    ]
+  },
+  "usd-krw-regular": {
+    "symbol": "USD/KRW",
+    "base": 1441.2,
+    "precision": 2,
+    "category": "Currencies",
+    "id": "usd-krw-regular",
+    "label": "USD/KRW",
+    "shortLabel": "USD/KRW",
+    "session": "Regular",
+    "payoutPercent": 82,
+    "payout": "82%",
+    "change": "+0.27%",
+    "up": true,
+    "countries": [
+      "us",
+      "kr"
+    ]
+  },
+  "usd-krw": {
+    "symbol": "USD/KRW",
+    "base": 1441.2,
+    "precision": 2,
+    "category": "Currencies",
+    "id": "usd-krw",
+    "label": "USD/KRW (OTC)",
+    "shortLabel": "USD/KRW",
+    "session": "OTC",
+    "payoutPercent": 86,
+    "payout": "86%",
+    "change": "+0.27%",
+    "up": true,
+    "countries": [
+      "us",
+      "kr"
+    ]
+  },
+  "usd-nok-regular": {
+    "symbol": "USD/NOK",
+    "base": 10.915,
+    "precision": 4,
+    "category": "Currencies",
+    "id": "usd-nok-regular",
+    "label": "USD/NOK",
+    "shortLabel": "USD/NOK",
+    "session": "Regular",
+    "payoutPercent": 83,
+    "payout": "83%",
+    "change": "+0.28%",
+    "up": true,
+    "countries": [
+      "us",
+      "no"
+    ]
+  },
+  "usd-nok": {
+    "symbol": "USD/NOK",
+    "base": 10.915,
+    "precision": 4,
+    "category": "Currencies",
+    "id": "usd-nok",
+    "label": "USD/NOK (OTC)",
+    "shortLabel": "USD/NOK",
+    "session": "OTC",
+    "payoutPercent": 87,
+    "payout": "87%",
+    "change": "+0.28%",
+    "up": true,
+    "countries": [
+      "us",
+      "no"
+    ]
+  },
+  "usd-sek-regular": {
+    "symbol": "USD/SEK",
+    "base": 10.771,
+    "precision": 4,
+    "category": "Currencies",
+    "id": "usd-sek-regular",
+    "label": "USD/SEK",
+    "shortLabel": "USD/SEK",
+    "session": "Regular",
+    "payoutPercent": 84,
+    "payout": "84%",
+    "change": "-0.29%",
+    "up": false,
+    "countries": [
+      "us",
+      "se"
+    ]
+  },
+  "usd-sek": {
+    "symbol": "USD/SEK",
+    "base": 10.771,
+    "precision": 4,
+    "category": "Currencies",
+    "id": "usd-sek",
+    "label": "USD/SEK (OTC)",
+    "shortLabel": "USD/SEK",
+    "session": "OTC",
+    "payoutPercent": 88,
+    "payout": "88%",
+    "change": "-0.29%",
+    "up": false,
+    "countries": [
+      "us",
+      "se"
+    ]
+  },
+  "usd-dkk-regular": {
+    "symbol": "USD/DKK",
+    "base": 6.878,
+    "precision": 4,
+    "category": "Currencies",
+    "id": "usd-dkk-regular",
+    "label": "USD/DKK",
+    "shortLabel": "USD/DKK",
+    "session": "Regular",
+    "payoutPercent": 85,
+    "payout": "85%",
+    "change": "+0.30%",
+    "up": true,
+    "countries": [
+      "us",
+      "dk"
+    ]
+  },
+  "usd-dkk": {
+    "symbol": "USD/DKK",
+    "base": 6.878,
+    "precision": 4,
+    "category": "Currencies",
+    "id": "usd-dkk",
+    "label": "USD/DKK (OTC)",
+    "shortLabel": "USD/DKK",
+    "session": "OTC",
+    "payoutPercent": 89,
+    "payout": "89%",
+    "change": "+0.30%",
+    "up": true,
+    "countries": [
+      "us",
+      "dk"
+    ]
+  },
+  "usd-pln-regular": {
+    "symbol": "USD/PLN",
+    "base": 3.852,
+    "precision": 4,
+    "category": "Currencies",
+    "id": "usd-pln-regular",
+    "label": "USD/PLN",
+    "shortLabel": "USD/PLN",
+    "session": "Regular",
+    "payoutPercent": 86,
+    "payout": "86%",
+    "change": "+0.31%",
+    "up": true,
+    "countries": [
+      "us",
+      "pl"
+    ]
+  },
+  "usd-pln": {
+    "symbol": "USD/PLN",
+    "base": 3.852,
+    "precision": 4,
+    "category": "Currencies",
+    "id": "usd-pln",
+    "label": "USD/PLN (OTC)",
+    "shortLabel": "USD/PLN",
+    "session": "OTC",
+    "payoutPercent": 90,
+    "payout": "90%",
+    "change": "+0.31%",
+    "up": true,
+    "countries": [
+      "us",
+      "pl"
+    ]
+  },
+  "bitcoin-regular": {
+    "symbol": "Bitcoin",
+    "base": 84350,
+    "category": "Crypto",
+    "precision": 2,
+    "id": "bitcoin-regular",
+    "label": "Bitcoin",
+    "shortLabel": "Bitcoin",
+    "session": "Regular",
+    "payoutPercent": 87,
+    "payout": "87%",
+    "change": "+0.32%",
+    "up": true,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "bitcoin": {
+    "symbol": "Bitcoin",
+    "base": 84350,
+    "category": "Crypto",
+    "precision": 2,
+    "id": "bitcoin",
+    "label": "Bitcoin (OTC)",
+    "shortLabel": "Bitcoin",
+    "session": "OTC",
+    "payoutPercent": 91,
+    "payout": "91%",
+    "change": "+0.32%",
+    "up": true,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "ethereum-regular": {
+    "symbol": "Ethereum",
+    "base": 2248.5,
+    "category": "Crypto",
+    "precision": 2,
+    "id": "ethereum-regular",
+    "label": "Ethereum",
+    "shortLabel": "Ethereum",
+    "session": "Regular",
+    "payoutPercent": 88,
+    "payout": "88%",
+    "change": "+0.33%",
+    "up": true,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "ethereum": {
+    "symbol": "Ethereum",
+    "base": 2248.5,
+    "category": "Crypto",
+    "precision": 2,
+    "id": "ethereum",
+    "label": "Ethereum (OTC)",
+    "shortLabel": "Ethereum",
+    "session": "OTC",
+    "payoutPercent": 92,
+    "payout": "92%",
+    "change": "+0.33%",
+    "up": true,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "litecoin-regular": {
+    "symbol": "Litecoin",
+    "base": 102.4,
+    "category": "Crypto",
+    "precision": 2,
+    "id": "litecoin-regular",
+    "label": "Litecoin",
+    "shortLabel": "Litecoin",
+    "session": "Regular",
+    "payoutPercent": 89,
+    "payout": "89%",
+    "change": "-0.34%",
+    "up": false,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "litecoin": {
+    "symbol": "Litecoin",
+    "base": 102.4,
+    "category": "Crypto",
+    "precision": 2,
+    "id": "litecoin",
+    "label": "Litecoin (OTC)",
+    "shortLabel": "Litecoin",
+    "session": "OTC",
+    "payoutPercent": 93,
+    "payout": "93%",
+    "change": "-0.34%",
+    "up": false,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "ripple-regular": {
+    "symbol": "Ripple",
+    "base": 2.45,
+    "category": "Crypto",
+    "precision": 2,
+    "id": "ripple-regular",
+    "label": "Ripple",
+    "shortLabel": "Ripple",
+    "session": "Regular",
+    "payoutPercent": 90,
+    "payout": "90%",
+    "change": "+0.35%",
+    "up": true,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "ripple": {
+    "symbol": "Ripple",
+    "base": 2.45,
+    "category": "Crypto",
+    "precision": 2,
+    "id": "ripple",
+    "label": "Ripple (OTC)",
+    "shortLabel": "Ripple",
+    "session": "OTC",
+    "payoutPercent": 80,
+    "payout": "80%",
+    "change": "+0.35%",
+    "up": true,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "solana-regular": {
+    "symbol": "Solana",
+    "base": 145.82,
+    "category": "Crypto",
+    "precision": 2,
+    "id": "solana-regular",
+    "label": "Solana",
+    "shortLabel": "Solana",
+    "session": "Regular",
+    "payoutPercent": 72,
+    "payout": "72%",
+    "change": "+0.36%",
+    "up": true,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "solana": {
+    "symbol": "Solana",
+    "base": 145.82,
+    "category": "Crypto",
+    "precision": 2,
+    "id": "solana",
+    "label": "Solana (OTC)",
+    "shortLabel": "Solana",
+    "session": "OTC",
+    "payoutPercent": 81,
+    "payout": "81%",
+    "change": "+0.36%",
+    "up": true,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "dogecoin-regular": {
+    "symbol": "Dogecoin",
+    "base": 0.2148,
+    "category": "Crypto",
+    "precision": 5,
+    "id": "dogecoin-regular",
+    "label": "Dogecoin",
+    "shortLabel": "Dogecoin",
+    "session": "Regular",
+    "payoutPercent": 73,
+    "payout": "73%",
+    "change": "+0.08%",
+    "up": true,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "dogecoin": {
+    "symbol": "Dogecoin",
+    "base": 0.2148,
+    "category": "Crypto",
+    "precision": 5,
+    "id": "dogecoin",
+    "label": "Dogecoin (OTC)",
+    "shortLabel": "Dogecoin",
+    "session": "OTC",
+    "payoutPercent": 82,
+    "payout": "82%",
+    "change": "+0.08%",
+    "up": true,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "cardano-regular": {
+    "symbol": "Cardano",
+    "base": 0.7142,
+    "category": "Crypto",
+    "precision": 5,
+    "id": "cardano-regular",
+    "label": "Cardano",
+    "shortLabel": "Cardano",
+    "session": "Regular",
+    "payoutPercent": 74,
+    "payout": "74%",
+    "change": "+0.09%",
+    "up": true,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "cardano": {
+    "symbol": "Cardano",
+    "base": 0.7142,
+    "category": "Crypto",
+    "precision": 5,
+    "id": "cardano",
+    "label": "Cardano (OTC)",
+    "shortLabel": "Cardano",
+    "session": "OTC",
+    "payoutPercent": 83,
+    "payout": "83%",
+    "change": "+0.09%",
+    "up": true,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "tron-regular": {
+    "symbol": "TRON",
+    "base": 0.2418,
+    "category": "Crypto",
+    "precision": 5,
+    "id": "tron-regular",
+    "label": "TRON",
+    "shortLabel": "TRON",
+    "session": "Regular",
+    "payoutPercent": 75,
+    "payout": "75%",
+    "change": "-0.10%",
+    "up": false,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "tron": {
+    "symbol": "TRON",
+    "base": 0.2418,
+    "category": "Crypto",
+    "precision": 5,
+    "id": "tron",
+    "label": "TRON (OTC)",
+    "shortLabel": "TRON",
+    "session": "OTC",
+    "payoutPercent": 84,
+    "payout": "84%",
+    "change": "-0.10%",
+    "up": false,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "bitcoin-cash-regular": {
+    "symbol": "Bitcoin Cash",
+    "base": 344.2,
+    "category": "Crypto",
+    "precision": 2,
+    "id": "bitcoin-cash-regular",
+    "label": "Bitcoin Cash",
+    "shortLabel": "Bitcoin Cash",
+    "session": "Regular",
+    "payoutPercent": 76,
+    "payout": "76%",
+    "change": "+0.11%",
+    "up": true,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "bitcoin-cash": {
+    "symbol": "Bitcoin Cash",
+    "base": 344.2,
+    "category": "Crypto",
+    "precision": 2,
+    "id": "bitcoin-cash",
+    "label": "Bitcoin Cash (OTC)",
+    "shortLabel": "Bitcoin Cash",
+    "session": "OTC",
+    "payoutPercent": 85,
+    "payout": "85%",
+    "change": "+0.11%",
+    "up": true,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "avalanche-regular": {
+    "symbol": "Avalanche",
+    "base": 24.82,
+    "category": "Crypto",
+    "precision": 2,
+    "id": "avalanche-regular",
+    "label": "Avalanche",
+    "shortLabel": "Avalanche",
+    "session": "Regular",
+    "payoutPercent": 77,
+    "payout": "77%",
+    "change": "+0.12%",
+    "up": true,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "avalanche": {
+    "symbol": "Avalanche",
+    "base": 24.82,
+    "category": "Crypto",
+    "precision": 2,
+    "id": "avalanche",
+    "label": "Avalanche (OTC)",
+    "shortLabel": "Avalanche",
+    "session": "OTC",
+    "payoutPercent": 86,
+    "payout": "86%",
+    "change": "+0.12%",
+    "up": true,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "gold-regular": {
+    "symbol": "Gold",
+    "base": 2918.4,
+    "category": "Commodities",
+    "precision": 2,
+    "id": "gold-regular",
+    "label": "Gold",
+    "shortLabel": "Gold",
+    "session": "Regular",
+    "payoutPercent": 78,
+    "payout": "78%",
+    "change": "+0.13%",
+    "up": true,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "gold": {
+    "symbol": "Gold",
+    "base": 2918.4,
+    "category": "Commodities",
+    "precision": 2,
+    "id": "gold",
+    "label": "Gold (OTC)",
+    "shortLabel": "Gold",
+    "session": "OTC",
+    "payoutPercent": 87,
+    "payout": "87%",
+    "change": "+0.13%",
+    "up": true,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "silver-regular": {
+    "symbol": "Silver",
+    "base": 32.15,
+    "category": "Commodities",
+    "precision": 2,
+    "id": "silver-regular",
+    "label": "Silver",
+    "shortLabel": "Silver",
+    "session": "Regular",
+    "payoutPercent": 79,
+    "payout": "79%",
+    "change": "+0.14%",
+    "up": true,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "silver": {
+    "symbol": "Silver",
+    "base": 32.15,
+    "category": "Commodities",
+    "precision": 2,
+    "id": "silver",
+    "label": "Silver (OTC)",
+    "shortLabel": "Silver",
+    "session": "OTC",
+    "payoutPercent": 88,
+    "payout": "88%",
+    "change": "+0.14%",
+    "up": true,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "uk-brent-regular": {
+    "symbol": "UKBrent",
+    "base": 53.122,
+    "category": "Commodities",
+    "precision": 3,
+    "id": "uk-brent-regular",
+    "label": "UKBrent",
+    "shortLabel": "UKBrent...",
+    "session": "Regular",
+    "payoutPercent": 80,
+    "payout": "80%",
+    "change": "-0.15%",
+    "up": false,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "uk-brent": {
+    "symbol": "UKBrent",
+    "base": 53.122,
+    "category": "Commodities",
+    "precision": 3,
+    "id": "uk-brent",
+    "label": "UKBrent (OTC)",
+    "shortLabel": "UKBrent...",
+    "session": "OTC",
+    "payoutPercent": 89,
+    "payout": "89%",
+    "change": "-0.15%",
+    "up": false,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "uscrude-regular": {
+    "symbol": "USCrude",
+    "base": 69.84,
+    "category": "Commodities",
+    "precision": 2,
+    "id": "uscrude-regular",
+    "label": "USCrude",
+    "shortLabel": "USCrude",
+    "session": "Regular",
+    "payoutPercent": 81,
+    "payout": "81%",
+    "change": "+0.16%",
+    "up": true,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "uscrude": {
+    "symbol": "USCrude",
+    "base": 69.84,
+    "category": "Commodities",
+    "precision": 2,
+    "id": "uscrude",
+    "label": "USCrude (OTC)",
+    "shortLabel": "USCrude",
+    "session": "OTC",
+    "payoutPercent": 90,
+    "payout": "90%",
+    "change": "+0.16%",
+    "up": true,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "natural-gas-regular": {
+    "symbol": "Natural Gas",
+    "base": 3.92,
+    "category": "Commodities",
+    "precision": 2,
+    "id": "natural-gas-regular",
+    "label": "Natural Gas",
+    "shortLabel": "Natural Gas",
+    "session": "Regular",
+    "payoutPercent": 82,
+    "payout": "82%",
+    "change": "+0.17%",
+    "up": true,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "natural-gas": {
+    "symbol": "Natural Gas",
+    "base": 3.92,
+    "category": "Commodities",
+    "precision": 2,
+    "id": "natural-gas",
+    "label": "Natural Gas (OTC)",
+    "shortLabel": "Natural Gas",
+    "session": "OTC",
+    "payoutPercent": 91,
+    "payout": "91%",
+    "change": "+0.17%",
+    "up": true,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "apple-regular": {
+    "symbol": "Apple",
+    "base": 229.72,
+    "category": "Stocks",
+    "precision": 2,
+    "id": "apple-regular",
+    "label": "Apple",
+    "shortLabel": "Apple",
+    "session": "Regular",
+    "payoutPercent": 83,
+    "payout": "83%",
+    "change": "+0.18%",
+    "up": true,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "apple": {
+    "symbol": "Apple",
+    "base": 229.72,
+    "category": "Stocks",
+    "precision": 2,
+    "id": "apple",
+    "label": "Apple (OTC)",
+    "shortLabel": "Apple",
+    "session": "OTC",
+    "payoutPercent": 92,
+    "payout": "92%",
+    "change": "+0.18%",
+    "up": true,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "microsoft-regular": {
+    "symbol": "Microsoft",
+    "base": 412.84,
+    "category": "Stocks",
+    "precision": 2,
+    "id": "microsoft-regular",
+    "label": "Microsoft",
+    "shortLabel": "Microsoft",
+    "session": "Regular",
+    "payoutPercent": 84,
+    "payout": "84%",
+    "change": "+0.19%",
+    "up": true,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "microsoft": {
+    "symbol": "Microsoft",
+    "base": 412.84,
+    "category": "Stocks",
+    "precision": 2,
+    "id": "microsoft",
+    "label": "Microsoft (OTC)",
+    "shortLabel": "Microsoft",
+    "session": "OTC",
+    "payoutPercent": 93,
+    "payout": "93%",
+    "change": "+0.19%",
+    "up": true,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "amazon-regular": {
+    "symbol": "Amazon",
+    "base": 214.62,
+    "category": "Stocks",
+    "precision": 2,
+    "id": "amazon-regular",
+    "label": "Amazon",
+    "shortLabel": "Amazon",
+    "session": "Regular",
+    "payoutPercent": 85,
+    "payout": "85%",
+    "change": "-0.20%",
+    "up": false,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "amazon": {
+    "symbol": "Amazon",
+    "base": 214.62,
+    "category": "Stocks",
+    "precision": 2,
+    "id": "amazon",
+    "label": "Amazon (OTC)",
+    "shortLabel": "Amazon",
+    "session": "OTC",
+    "payoutPercent": 80,
+    "payout": "80%",
+    "change": "-0.20%",
+    "up": false,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "meta-regular": {
+    "symbol": "Meta",
+    "base": 668.1,
+    "category": "Stocks",
+    "precision": 2,
+    "id": "meta-regular",
+    "label": "Meta",
+    "shortLabel": "Meta",
+    "session": "Regular",
+    "payoutPercent": 86,
+    "payout": "86%",
+    "change": "+0.21%",
+    "up": true,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "meta": {
+    "symbol": "Meta",
+    "base": 668.1,
+    "category": "Stocks",
+    "precision": 2,
+    "id": "meta",
+    "label": "Meta (OTC)",
+    "shortLabel": "Meta",
+    "session": "OTC",
+    "payoutPercent": 81,
+    "payout": "81%",
+    "change": "+0.21%",
+    "up": true,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "tesla-regular": {
+    "symbol": "Tesla",
+    "base": 282.84,
+    "category": "Stocks",
+    "precision": 2,
+    "id": "tesla-regular",
+    "label": "Tesla",
+    "shortLabel": "Tesla",
+    "session": "Regular",
+    "payoutPercent": 87,
+    "payout": "87%",
+    "change": "+0.22%",
+    "up": true,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "tesla": {
+    "symbol": "Tesla",
+    "base": 282.84,
+    "category": "Stocks",
+    "precision": 2,
+    "id": "tesla",
+    "label": "Tesla (OTC)",
+    "shortLabel": "Tesla",
+    "session": "OTC",
+    "payoutPercent": 82,
+    "payout": "82%",
+    "change": "+0.22%",
+    "up": true,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "nvidia-regular": {
+    "symbol": "NVIDIA",
+    "base": 128.45,
+    "category": "Stocks",
+    "precision": 2,
+    "id": "nvidia-regular",
+    "label": "NVIDIA",
+    "shortLabel": "NVIDIA",
+    "session": "Regular",
+    "payoutPercent": 88,
+    "payout": "88%",
+    "change": "+0.23%",
+    "up": true,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "nvidia": {
+    "symbol": "NVIDIA",
+    "base": 128.45,
+    "category": "Stocks",
+    "precision": 2,
+    "id": "nvidia",
+    "label": "NVIDIA (OTC)",
+    "shortLabel": "NVIDIA",
+    "session": "OTC",
+    "payoutPercent": 83,
+    "payout": "83%",
+    "change": "+0.23%",
+    "up": true,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "alphabet-regular": {
+    "symbol": "Alphabet",
+    "base": 176.25,
+    "category": "Stocks",
+    "precision": 2,
+    "id": "alphabet-regular",
+    "label": "Alphabet",
+    "shortLabel": "Alphabet",
+    "session": "Regular",
+    "payoutPercent": 89,
+    "payout": "89%",
+    "change": "+0.24%",
+    "up": true,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "alphabet": {
+    "symbol": "Alphabet",
+    "base": 176.25,
+    "category": "Stocks",
+    "precision": 2,
+    "id": "alphabet",
+    "label": "Alphabet (OTC)",
+    "shortLabel": "Alphabet",
+    "session": "OTC",
+    "payoutPercent": 84,
+    "payout": "84%",
+    "change": "+0.24%",
+    "up": true,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "intel-regular": {
+    "symbol": "Intel",
+    "base": 23.62,
+    "category": "Stocks",
+    "precision": 2,
+    "id": "intel-regular",
+    "label": "Intel",
+    "shortLabel": "Intel",
+    "session": "Regular",
+    "payoutPercent": 90,
+    "payout": "90%",
+    "change": "-0.25%",
+    "up": false,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "intel": {
+    "symbol": "Intel",
+    "base": 23.62,
+    "category": "Stocks",
+    "precision": 2,
+    "id": "intel",
+    "label": "Intel (OTC)",
+    "shortLabel": "Intel",
+    "session": "OTC",
+    "payoutPercent": 85,
+    "payout": "85%",
+    "change": "-0.25%",
+    "up": false,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "boeing-regular": {
+    "symbol": "Boeing",
+    "base": 171.46,
+    "category": "Stocks",
+    "precision": 2,
+    "id": "boeing-regular",
+    "label": "Boeing",
+    "shortLabel": "Boeing",
+    "session": "Regular",
+    "payoutPercent": 72,
+    "payout": "72%",
+    "change": "+0.26%",
+    "up": true,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "boeing": {
+    "symbol": "Boeing",
+    "base": 171.46,
+    "category": "Stocks",
+    "precision": 2,
+    "id": "boeing",
+    "label": "Boeing (OTC)",
+    "shortLabel": "Boeing",
+    "session": "OTC",
+    "payoutPercent": 86,
+    "payout": "86%",
+    "change": "+0.26%",
+    "up": true,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "mcdonalds-regular": {
+    "symbol": "McDonald's",
+    "base": 309.22,
+    "category": "Stocks",
+    "precision": 2,
+    "id": "mcdonalds-regular",
+    "label": "McDonald's",
+    "shortLabel": "McDonald's",
+    "session": "Regular",
+    "payoutPercent": 73,
+    "payout": "73%",
+    "change": "+0.27%",
+    "up": true,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "mcdonalds": {
+    "symbol": "McDonald's",
+    "base": 309.22,
+    "category": "Stocks",
+    "precision": 2,
+    "id": "mcdonalds",
+    "label": "McDonald's (OTC)",
+    "shortLabel": "McDonald's",
+    "session": "OTC",
+    "payoutPercent": 87,
+    "payout": "87%",
+    "change": "+0.27%",
+    "up": true,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "coca-cola-regular": {
+    "symbol": "Coca-Cola",
+    "base": 71.23,
+    "category": "Stocks",
+    "precision": 2,
+    "id": "coca-cola-regular",
+    "label": "Coca-Cola",
+    "shortLabel": "Coca-Cola",
+    "session": "Regular",
+    "payoutPercent": 74,
+    "payout": "74%",
+    "change": "+0.28%",
+    "up": true,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "coca-cola": {
+    "symbol": "Coca-Cola",
+    "base": 71.23,
+    "category": "Stocks",
+    "precision": 2,
+    "id": "coca-cola",
+    "label": "Coca-Cola (OTC)",
+    "shortLabel": "Coca-Cola",
+    "session": "OTC",
+    "payoutPercent": 88,
+    "payout": "88%",
+    "change": "+0.28%",
+    "up": true,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "american-express-regular": {
+    "symbol": "American Express",
+    "base": 287.4,
+    "category": "Stocks",
+    "precision": 2,
+    "id": "american-express-regular",
+    "label": "American Express",
+    "shortLabel": "American Express",
+    "session": "Regular",
+    "payoutPercent": 75,
+    "payout": "75%",
+    "change": "+0.29%",
+    "up": true,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "american-express": {
+    "symbol": "American Express",
+    "base": 287.4,
+    "category": "Stocks",
+    "precision": 2,
+    "id": "american-express",
+    "label": "American Express (OTC)",
+    "shortLabel": "American Express",
+    "session": "OTC",
+    "payoutPercent": 89,
+    "payout": "89%",
+    "change": "+0.29%",
+    "up": true,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "johnson-johnson-regular": {
+    "symbol": "Johnson & Johnson",
+    "base": 165.72,
+    "category": "Stocks",
+    "precision": 2,
+    "id": "johnson-johnson-regular",
+    "label": "Johnson & Johnson",
+    "shortLabel": "Johnson & Johnson",
+    "session": "Regular",
+    "payoutPercent": 76,
+    "payout": "76%",
+    "change": "-0.30%",
+    "up": false,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "johnson-johnson": {
+    "symbol": "Johnson & Johnson",
+    "base": 165.72,
+    "category": "Stocks",
+    "precision": 2,
+    "id": "johnson-johnson",
+    "label": "Johnson & Johnson (OTC)",
+    "shortLabel": "Johnson & Johnson",
+    "session": "OTC",
+    "payoutPercent": 90,
+    "payout": "90%",
+    "change": "-0.30%",
+    "up": false,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "pfizer-regular": {
+    "symbol": "Pfizer",
+    "base": 26.25,
+    "category": "Stocks",
+    "precision": 2,
+    "id": "pfizer-regular",
+    "label": "Pfizer",
+    "shortLabel": "Pfizer",
+    "session": "Regular",
+    "payoutPercent": 77,
+    "payout": "77%",
+    "change": "+0.31%",
+    "up": true,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "pfizer": {
+    "symbol": "Pfizer",
+    "base": 26.25,
+    "category": "Stocks",
+    "precision": 2,
+    "id": "pfizer",
+    "label": "Pfizer (OTC)",
+    "shortLabel": "Pfizer",
+    "session": "OTC",
+    "payoutPercent": 91,
+    "payout": "91%",
+    "change": "+0.31%",
+    "up": true,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "sp-500-regular": {
+    "symbol": "S&P 500",
+    "base": 5948.72,
+    "category": "Indices",
+    "precision": 2,
+    "id": "sp-500-regular",
+    "label": "S&P 500",
+    "shortLabel": "S&P 500",
+    "session": "Regular",
+    "payoutPercent": 78,
+    "payout": "78%",
+    "change": "+0.32%",
+    "up": true,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "sp-500": {
+    "symbol": "S&P 500",
+    "base": 5948.72,
+    "category": "Indices",
+    "precision": 2,
+    "id": "sp-500",
+    "label": "S&P 500 (OTC)",
+    "shortLabel": "S&P 500",
+    "session": "OTC",
+    "payoutPercent": 92,
+    "payout": "92%",
+    "change": "+0.32%",
+    "up": true,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "nasdaq-100-regular": {
+    "symbol": "NASDAQ 100",
+    "base": 20975.5,
+    "category": "Indices",
+    "precision": 2,
+    "id": "nasdaq-100-regular",
+    "label": "NASDAQ 100",
+    "shortLabel": "NASDAQ 100",
+    "session": "Regular",
+    "payoutPercent": 79,
+    "payout": "79%",
+    "change": "+0.33%",
+    "up": true,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "nasdaq-100": {
+    "symbol": "NASDAQ 100",
+    "base": 20975.5,
+    "category": "Indices",
+    "precision": 2,
+    "id": "nasdaq-100",
+    "label": "NASDAQ 100 (OTC)",
+    "shortLabel": "NASDAQ 100",
+    "session": "OTC",
+    "payoutPercent": 93,
+    "payout": "93%",
+    "change": "+0.33%",
+    "up": true,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "dow-jones-regular": {
+    "symbol": "Dow Jones",
+    "base": 43840.9,
+    "category": "Indices",
+    "precision": 2,
+    "id": "dow-jones-regular",
+    "label": "Dow Jones",
+    "shortLabel": "Dow Jones",
+    "session": "Regular",
+    "payoutPercent": 80,
+    "payout": "80%",
+    "change": "+0.34%",
+    "up": true,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "dow-jones": {
+    "symbol": "Dow Jones",
+    "base": 43840.9,
+    "category": "Indices",
+    "precision": 2,
+    "id": "dow-jones",
+    "label": "Dow Jones (OTC)",
+    "shortLabel": "Dow Jones",
+    "session": "OTC",
+    "payoutPercent": 80,
+    "payout": "80%",
+    "change": "+0.34%",
+    "up": true,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "dax-regular": {
+    "symbol": "DAX",
+    "base": 22612.4,
+    "category": "Indices",
+    "precision": 2,
+    "id": "dax-regular",
+    "label": "DAX",
+    "shortLabel": "DAX",
+    "session": "Regular",
+    "payoutPercent": 81,
+    "payout": "81%",
+    "change": "-0.35%",
+    "up": false,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "dax": {
+    "symbol": "DAX",
+    "base": 22612.4,
+    "category": "Indices",
+    "precision": 2,
+    "id": "dax",
+    "label": "DAX (OTC)",
+    "shortLabel": "DAX",
+    "session": "OTC",
+    "payoutPercent": 81,
+    "payout": "81%",
+    "change": "-0.35%",
+    "up": false,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "ftse-100-regular": {
+    "symbol": "FTSE 100",
+    "base": 8738.2,
+    "category": "Indices",
+    "precision": 2,
+    "id": "ftse-100-regular",
+    "label": "FTSE 100",
+    "shortLabel": "FTSE 100",
+    "session": "Regular",
+    "payoutPercent": 82,
+    "payout": "82%",
+    "change": "+0.36%",
+    "up": true,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "ftse-100": {
+    "symbol": "FTSE 100",
+    "base": 8738.2,
+    "category": "Indices",
+    "precision": 2,
+    "id": "ftse-100",
+    "label": "FTSE 100 (OTC)",
+    "shortLabel": "FTSE 100",
+    "session": "OTC",
+    "payoutPercent": 82,
+    "payout": "82%",
+    "change": "+0.36%",
+    "up": true,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "composite-regular": {
+    "symbol": "Composite",
+    "base": 1842.4,
+    "category": "Indices",
+    "precision": 2,
+    "id": "composite-regular",
+    "label": "Composite",
+    "shortLabel": "Composite",
+    "session": "Regular",
+    "payoutPercent": 83,
+    "payout": "83%",
+    "change": "+0.08%",
+    "up": true,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  },
+  "composite": {
+    "symbol": "Composite",
+    "base": 1842.4,
+    "category": "Indices",
+    "precision": 2,
+    "id": "composite",
+    "label": "Composite (OTC)",
+    "shortLabel": "Composite",
+    "session": "OTC",
+    "payoutPercent": 83,
+    "payout": "83%",
+    "change": "+0.08%",
+    "up": true,
+    "countries": [
+      "gb",
+      "us"
+    ]
+  }
+}
