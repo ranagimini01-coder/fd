@@ -2,9 +2,10 @@
 
 This repository's backend is a Python/FastAPI app. In Railway, create a service
 from this repository and set its **Root Directory** to
-`master-Candel-v9-main/backend`. Railway will install dependencies from
-`requirements.txt`; `railway.json` starts the app with Uvicorn on Railway's
-`$PORT`.
+`master-Candel-v9-main/backend` and select the **Dockerfile** builder. The
+backend Dockerfile installs CPU-only PyTorch to avoid including CUDA runtime
+libraries in the image, along with the Node.js runtime used by the analysis
+worker. `railway.json` starts the app with Uvicorn on Railway's `$PORT`.
 
 Add these required values under the service's **Variables** in Railway:
 
