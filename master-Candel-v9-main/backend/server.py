@@ -11,6 +11,7 @@ if str(BACKEND_DIR) not in sys.path:
 
 load_dotenv(BACKEND_DIR / '.env')
 
+from mongo_config import mongo_url_from_environment
 from fastapi import FastAPI, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -41,7 +42,7 @@ from ensemble_fusion import EnsembleFusion
 from forecasting.signal_confluence import SignalConfluenceEngine
 from forecasting.risk_manager import RiskManager
 
-client = AsyncIOMotorClient(os.environ['MONGO_URL'], serverSelectionTimeoutMS=5000)
+client = AsyncIOMotorClient(mongo_url_from_environment(), serverSelectionTimeoutMS=5000)
 db = client[os.environ['DB_NAME']]
 store = MarketStore(db)
 market_cache = RedisMarketCache()

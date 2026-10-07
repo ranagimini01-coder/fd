@@ -14,6 +14,12 @@ Add these required values under the service's **Variables** in Railway:
 | `MONGO_URL` | MongoDB connection URI, including credentials if authentication is enabled |
 | `DB_NAME` | Name of the application database |
 
+`MONGO_URL` is preferred. Alternatively, configure `MONGO_HOST` and optionally
+`MONGO_PORT` (default `27017`), `MONGO_USER`, and `MONGO_PASSWORD`; when using
+this split configuration, set `DB_NAME` as well. Do not use the generic
+`DB_HOST`, `DB_PORT`, `DB_USER`, or `DB_PASSWORD` variables for MongoDB: this
+project uses those names for its optional PostgreSQL connection.
+
 Keep the URI in Railway's Variables (or another secret manager), not in source
 code, `railway.json`, or a committed `.env` file. Railway environment variables
 are provided to the app at runtime; no MongoDB credentials need to be pushed to

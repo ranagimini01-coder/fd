@@ -18,13 +18,13 @@ export default defineConfig(async ({ mode }) => {
   const codespaceName = process.env.CODESPACE_NAME;
   const forwardingDomain = process.env.GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN;
   const isCodespaces = Boolean(codespaceName && forwardingDomain);
-  const sameOriginApi = process.env.VITE_API_SAME_ORIGIN === "true";
+  const sameOriginApi = process.env.VITE_API_SAME_ORIGIN === "true" || mode === "production";
   const backendUrl = isCodespaces || sameOriginApi ? "" : process.env.VITE_BACKEND_URL
     || process.env.REACT_APP_BACKEND_URL
     || env.VITE_BACKEND_URL
     || env.REACT_APP_BACKEND_URL;
   if (!backendUrl && !isCodespaces && !sameOriginApi) throw new Error("VITE_BACKEND_URL is required");
-  if (!env.DEV_PORT) throw new Error("DEV_PORT is required");
+  const devPort = Number(process.env.DEV_PORT || env.DEV_PORT || 5173);
   process.env.VITE_BACKEND_URL = backendUrl;
   return {
     define: {
@@ -79,12 +79,12 @@ export default defineConfig(async ({ mode }) => {
     },
     server: {
       host: true,
-      port: Number(env.DEV_PORT),
+      port: devPort,
       strictPort: true,
       allowedHosts: true,
       // Preview probe is cross-origin from the hosting tab; Vite defaults to localhost-only CORS.
       cors: true,
-      proxy: isCodespaces ? {
+      proxy: isCodespaces || sameOriginApi ? {
         "/api": {
           target: process.env.CODESPACE_BACKEND_PROXY_TARGET || "http://127.0.0.1:7007",
           changeOrigin: true,

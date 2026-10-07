@@ -1,0 +1,198 @@
+MASTER CANDLE — Windows CMD-তে .env setup ও চালানোর নিয়ম
+========================================================
+
+এই নির্দেশনা Windows CMD-এর জন্য। অ্যাপের কোডের কোনো ফাইলে MongoDB password,
+Deriv token বা অন্য secret লিখবেন না। নিজের backend\.env ফাইলেই শুধু local
+configuration রাখবেন। backend\.env Git-এ commit/push করবেন না।
+
+
+ধাপ ১ — দরকারি সফটওয়্যার
+-----------------------
+১. Python 3.13 ইনস্টল করুন। Python installer-এ “Add Python to PATH” নির্বাচন
+   করুন।
+২. Node.js 20 বা তার পরের LTS সংস্করণ ইনস্টল করুন। এতে npm-ও থাকবে।
+৩. MongoDB Community Server ইনস্টল করুন এবং MongoDB service চালু রাখুন।
+৪. Deriv-এর public market feed-এর জন্য সাধারণত API token/login লাগে না।
+   অ্যাপটি public market data ব্যবহার করে; এখানে account password/token দেবেন না।
+
+
+ধাপ ২ — CMD-তে project folder-এ যান
+-----------------------------------
+CMD খুলুন। আপনার project যে জায়গায় আছে, সেই অনুযায়ী folder path ব্যবহার করুন।
+উদাহরণ:
+
+    cd /d C:\Users\YOUR_NAME\Desktop\NAQSO\master-Candel-v9-main
+
+YOUR_NAME এবং path নিজের কম্পিউটারের path দিয়ে বদলাবেন। VS Code-এ project
+খোলা থাকলে Terminal > New Terminal খুলে:
+
+    cd master-Candel-v9-main
+
+লিখুন। সঠিক folder-এ আছেন কি না দেখতে:
+
+    dir
+
+এই folder-এ start-dev.cmd, backend এবং frontend দেখা উচিত।
+
+
+ধাপ ৩ — Python environment ও backend package ইনস্টল
+--------------------------------------------------
+Python 3.13 ইনস্টল আছে কি না দেখুন:
+
+    py -3.13 --version
+
+তারপর project folder-এ একবার করে চালান:
+
+    py -3.13 -m venv .venv
+    .venv\Scripts\activate
+    python -m pip install --upgrade pip
+    python -m pip install -r backend\requirements.txt
+
+যদি py -3.13 কাজ না করে, Python 3.13 ইনস্টল করে CMD বন্ধ করে নতুন CMD খুলুন।
+যদি package install-এ error আসে, সেই error message সংরক্ষণ করুন; error না দেখে
+অন্য package version বসাবেন না।
+
+
+ধাপ ৪ — Frontend package ইনস্টল
+-------------------------------
+Project folder থেকেই চালান:
+
+    cd frontend
+    npm ci
+    cd ..
+
+Node.js version দেখতে:
+
+    node --version
+    npm --version
+
+
+ধাপ ৫ — MongoDB চালু এবং connection যাচাই
+-----------------------------------------
+MongoDB Windows service হিসেবে ইনস্টল হলে CMD-তে দেখুন:
+
+    sc query MongoDB
+
+STATE-এ RUNNING না দেখালে Administrator CMD খুলে চালান:
+
+    net start MongoDB
+
+এরপর local MongoDB address হবে:
+
+    mongodb://127.0.0.1:27017
+
+MongoDB আপনার কম্পিউটারে ইনস্টল না থাকলে এই address কাজ করবে না। MongoDB
+Community Server ইনস্টল/চালু করুন, অথবা নিরাপদ hosted MongoDB connection URI
+ব্যবহার করুন। Hosted database হলে MongoDB provider-এ আপনার বর্তমান IP allow
+করুন; username/password URI-তে থাকলে সেগুলো কারও সঙ্গে share বা commit করবেন না।
+
+
+ধাপ ৬ — backend\.env ফাইল তৈরি ও পূরণ
+-------------------------------------
+Project folder-এ আছেন নিশ্চিত হয়ে চালান:
+
+    copy backend\.env.example backend\.env
+    notepad backend\.env
+
+ফাইলটি আগে থেকেই থাকলে copy command-এ overwrite-এর প্রশ্ন এলে N দিন। বিদ্যমান
+ফাইলটি Notepad দিয়ে খুলে প্রয়োজনীয় মান ঠিক করুন। উদাহরণ configuration:
+
+    MONGO_URL=mongodb://127.0.0.1:27017
+    DB_NAME=master_candel
+
+    DERIV_ENABLED=true
+    DERIV_WS_URL=wss://api.derivws.com/trading/v1/options/ws/public
+    DERIV_APP_ID=1089
+    DERIV_SYMBOLS=ALL
+    DERIV_CANDLE_SYMBOLS=ALL
+    DERIV_MAX_CANDLE_SYMBOLS=100
+
+    MARKET_TIMEFRAMES=1s,5s,15s,1m,5m,10m,15m,30m,1h
+    MARKET_FRESHNESS_SECONDS=30
+    ANALYSIS_INTERVAL_SECONDS=15
+    MAX_AGENT_CONCURRENCY=500
+
+নিয়ম:
+- প্রতিটি variable আলাদা লাইনে লিখুন; সমান চিহ্নের দুপাশে space দেবেন না।
+- MONGO_URL এবং DB_NAME অবশ্যই ঠিক থাকতে হবে। Local MongoDB হলে উপরের মানই
+  ব্যবহার করতে পারেন।
+- Hosted MongoDB হলে MONGO_URL-এ provider-এর দেওয়া URI বসান এবং DB_NAME
+  database-এর নাম দিন। URI-র password-এ বিশেষ চিহ্ন থাকলে provider-এর
+  নির্দেশনা অনুযায়ী URL-encode করুন।
+- DERIV_ENABLED=true রাখুন। DERIV_APP_ID না লিখলেও backend-এর default app ID
+  ব্যবহার হবে; এখানে 1089 স্পষ্ট করে দেওয়া আছে।
+- উপরের configuration public Deriv market stream-এর জন্য। Deriv account
+  password, API token বা secret এখানে যোগ করবেন না।
+- MARKET_FRESHNESS_SECONDS=30 মানে ৩০ সেকেন্ডের বেশি পুরোনো tick stale ধরা হবে।
+- PORT variable launcher-এর প্রয়োজন নেই; launcher backend-কে 7007 port-এ চালায়।
+- .env ফাইলে # দিয়ে শুরু হওয়া comment line রাখা যায়। quote চিহ্ন না দিলেও চলে।
+
+ফাইল Save করে Notepad বন্ধ করুন। .env নামটি যেন backend\.env হয়—backend\.env.txt
+না হয়। Windows Explorer-এ file extension লুকানো থাকলে View > Show > File name
+extensions চালু করে নাম যাচাই করুন।
+
+
+ধাপ ৭ — Backend ও frontend একসঙ্গে চালু
+---------------------------------------
+Project folder-এ ফিরে এসে চালান:
+
+    start-dev.cmd
+
+এটি backend এবং frontend-এর জন্য আলাদা দুটি CMD window খুলবে। Window দুটো বন্ধ
+করবেন না—বন্ধ করলে সংশ্লিষ্ট server বন্ধ হবে। Frontend খুলুন:
+
+    http://127.0.0.1:5173
+
+প্রথমবার start-dev.cmd যদি dependency missing বলে, ধাপ ৩ ও ৪ সম্পূর্ণ করে আবার
+চালান। .env missing বললে ধাপ ৬ সম্পূর্ণ করে আবার চালান।
+
+
+ধাপ ৮ — MongoDB, Deriv ও signal live কি না যাচাই
+-------------------------------------------------
+Browser-এ নিচের address-গুলো একে একে খুলুন:
+
+    http://127.0.0.1:7007/api/health
+    http://127.0.0.1:7007/api/v1/runtime
+    http://127.0.0.1:7007/api/v1/signals/check
+    http://127.0.0.1:7007/api/v1/signals/live
+    http://127.0.0.1:7007/api/v1/ml/status
+
+যা দেখবেন:
+১. /api/health-এ status "ok" এবং database "connected" থাকতে হবে।
+২. /api/v1/runtime-এ providers তালিকার Deriv provider-এর state প্রথমে CONNECTING
+   হতে পারে। Feed ঠিকমতো এলে DATA_RECEIVING হবে; ticksReceived বাড়তে থাকবে।
+৩. /api/v1/signals/check-এ connectionStatus CONNECTED এবং verdict RECEIVING,
+   RECEIVING_WARMING_UP, অথবা RECEIVING_SIGNALS_ACTIVE দেখা যেতে পারে।
+৪. /api/v1/ml/status-এ training/bootstrap progress এবং model readiness দেখা যায়।
+   পর্যাপ্ত যাচাই করা candle history না জমা পর্যন্ত model ready নাও হতে পারে।
+৫. /api/v1/signals/live ফাঁকা থাকা বা NO_SIGNAL দেখানো মানেই connection নষ্ট নয়।
+   Signal কেবল যথেষ্ট live history এবং model/risk/calibration gate পাস করলে তৈরি হয়।
+
+
+Deriv CONNECTING/STALE থাকলে
+----------------------------
+১. Backend CMD window-তে Deriv warning/error আছে কি না দেখুন।
+২. Internet/VPN/firewall/proxy WebSocket connection আটকাচ্ছে কি না পরীক্ষা করুন।
+৩. backend\.env-এ DERIV_ENABLED=true এবং DERIV_WS_URL ঠিক আছে কি না যাচাই করুন।
+৪. System clock automatic/time-synced রাখুন। পুরোনো tick fresh হিসেবে গণ্য হবে না।
+৫. পরিবর্তনের পর backend CMD window-তে Ctrl+C দিয়ে বন্ধ করে start-dev.cmd আবার চালান।
+৬. Deriv public endpoint/network সাময়িক unavailable হলে reconnect-এ সময় লাগতে পারে।
+
+MongoDB disconnected থাকলে
+--------------------------
+১. MongoDB service-এর STATE RUNNING কি না sc query MongoDB দিয়ে দেখুন।
+২. MONGO_URL-এ hostname/port এবং প্রয়োজনে login ঠিক আছে কি না দেখুন।
+৩. Hosted MongoDB হলে provider-এর IP access list, username/password ও database
+   access যাচাই করুন। Password প্রকাশ করবেন না।
+৪. পরিবর্তনের পর backend বন্ধ করে পুনরায় start-dev.cmd চালান।
+
+
+সতর্কতা
+-------
+- এই অ্যাপের signal/ML output বিশ্লেষণমূলক; লাভ বা নির্ভুলতার নিশ্চয়তা নয়।
+- পর্যাপ্ত বা নির্ভরযোগ্য data না থাকলে NO_SIGNAL নিরাপদ ও প্রত্যাশিত ফল।
+- Live Deriv market data আসা মানে broker order execute হওয়া নয়। এই project-এ
+  executionEnabled=false; স্বয়ংক্রিয় real-money trade চালু করা হচ্ছে না।
+- MongoDB URI, password, API key/token বা .env-এর আসল contents screenshot, chat,
+  GitHub বা public support post-এ দেবেন না।
+- এই ফাইলটি setup guide; আসল connection secret শুধু backend\.env-এ রাখুন।

@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "start": "node server.cjs",
-    "dev": "DEV_PORT=5173 vite --host 0.0.0.0 --port 5173 --strictPort",
-    "build": "DEV_PORT=5173 VITE_API_SAME_ORIGIN=true tsc -b && DEV_PORT=5173 VITE_API_SAME_ORIGIN=true vite build",
+    "dev": "vite --host 0.0.0.0 --port 5173 --strictPort",
+    "build": "tsc -b && vite build",
     "typecheck": "tsc -b --noEmit",
     "preview": "vite preview --host 0.0.0.0 --port 5173 --strictPort"
   },
